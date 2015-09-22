@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/data/jpa
+    					http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+    					http://www.springframework.org/schema/tx
+    					http://www.springframework.org/schema/tx/spring-tx.xsd
+    					http://www.springframework.org/schema/context
+            			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+						http://cxf.apache.org/jaxrs
+						http://cxf.apache.org/schemas/jaxrs.xsd
+						http://cxf.apache.org/jaxws
+						http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath*:META-INF/cxf/cxf-extension-*.xml" />
+	
+	<context:property-placeholder location="classpath:application.properties"/>
+
+	<bean id="dataSourceBean" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+ 		<property name="driverClassName" 	value="${db.driver}" />
+		<property name="url" 				value="${db.url}" />
+		<property name="username" 			value="${db.username}" />
+		<property name="password" 			value="${db.password}" />
+	</bean>
+	
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSourceBean"/>
+        <property name="jpaVendorAdapter">
+         	<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+      	</property>
+        <property name="packagesToScan" value="com.macys.dao.database"/>
+        <property name="jpaProperties">
+         <props>
+           <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+         </props>
+      </property>
+    </bean>
+	 
+	<!-- Enables the Hibernate @Transactional programming model -->
+    <tx:annotation-driven transaction-manager="transactionManager" /> 
+     
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+         <property name="entityManagerFactory" ref="entityManagerFactory"/>
+        
+    </bean>
+    
+	<jpa:repositories base-package="com.macys.dao.repository"></jpa:repositories>
+	
+	<bean id="jdbcTemplateRepostioryBean" class="com.macys.dao.repository.JdbcTemplateRepostiory">
+		<property name="dataSource" ref="dataSourceBean" />
+	</bean>
+	
+	<bean id="daoBean" 	class="com.macys.dao.DAOImpl">
+		<property name="jdbcTemplateRepostiory" ref="jdbcTemplateRepostioryBean"></property>
+	</bean>
+	
+	
+	<bean id="userServiceBean"	class="com.macys.services.UserService">
+		<property name="dao" ref="daoBean"></property>		
+	</bean>
+	
+	 
+	<bean id="userAuthenticatorBean" 	class="com.macys.rest.filters.UserAuthenticator">
+		
+	</bean>
+	 
+	<!-- REST SERVICE THAT WILL ACCEPT ALL PUBLIC REST CALLS -->
+	<bean id="publicRestController" class="com.macys.rest.PublicRestController">
+		<property name="userService" 	ref="userServiceBean"></property>
+	</bean>
+	
+	<!-- JSON PROVIDER BEAN -->
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
+	
+	<!-- EXCEPTION MAPPER -->
+	<bean id="generalExceptionMapper" 	class="com.macys.exceptions.GeneralExceptionMapper"/>
+	
+	<!-- REST FILTERS -->
+	<bean id="userReqFilter" class="com.macys.rest.filters.UserAuthRequestFilter">
+		<!-- <property name="userAuthenticator" ref="userAuthenticatorBean"></property> -->
+	</bean>
+	<bean id="userResFilter" class="com.macys.rest.filters.UserAuthResponseFilter"/> 
+	
+	 
+	<!-- Swagger API listing resource --> 
+	<bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON" />
+
+	<!-- Swagger writers -->
+	<bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" />
+	<bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" />
+	 
+	
+	<jaxrs:server address="/public">
+		<jaxrs:serviceBeans>
+			<ref bean="publicRestController"></ref>
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="userResFilter"/>
+			<ref bean="generalExceptionMapper"/>
+			<ref bean="jsonProvider"/>
+		</jaxrs:providers>
+	</jaxrs:server>
+	
+	
+	<jaxrs:server address="/swagger" id="swagger">
+		<jaxrs:serviceBeans>
+			<ref bean="swaggerResourceJSON" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="resourceWriter" />
+			<ref bean="apiWriter" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	 
+	<bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
+		<property name="resourcePackage" 	value="com.macys.rest" />
+		<property name="version" 			value="1.0" />
+		<!-- <property name="basePath" 			value="http://localhost:9090/fillthecup" /> -->
+		<property name="basePath" 			value="https://jbossews-abbasikov.rhcloud.com/fillthecup" />
+		<property name="title" 				value="Swagger UI FillTheCup" />
+		<property name="description" 		value="FillTheCup Project REST API Documentation." />
+		<property name="contact" 			value="umair.abbasi@macys.com" />
+		<property name="scan" 				value="true" />
+	</bean>
+	 
+</beans>
