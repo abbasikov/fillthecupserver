@@ -243,6 +243,19 @@ public class DAOImpl extends BaseDAOImpl implements DAO {
 	}
 	
 	@Override
+	public List<Relationship> findRelationshipByChildUuidAndType(String childUuid,String type){
+		List<DBObjectRelationship> relations = this.dbObjectRelationshipRepository.findRelationshipByChildUuidAndType(childUuid,type);
+		
+		List<Relationship> relationships = new ArrayList<Relationship>(relations.size());
+		
+		for(DBObjectRelationship dbRelationship:relations) {
+			relationships.add(new Relationship(dbRelationship));
+		}
+		
+		return relationships;
+	}
+	
+	@Override
 	public List<Relationship> findChildrenWithRelationshipType(String parentUuid, RelationshipTypeEnum relationshipTypeEnum) {
 		
 		List<DBObjectRelationship> children = this.dbObjectRelationshipRepository.findChildrenWithRelationshipType(parentUuid, relationshipTypeEnum.getRelationshipName());

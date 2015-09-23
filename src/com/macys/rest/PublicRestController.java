@@ -1,10 +1,16 @@
 package com.macys.rest;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -18,8 +24,11 @@ import com.macys.exceptions.ErrorCodeEnum;
 import com.macys.exceptions.ServiceException;
 import com.macys.services.UserService;
 import com.macys.utils.Constants;
+import com.macys.valuesobjects.LabVo;
+import com.macys.valuesobjects.MetaVo;
 import com.macys.valuesobjects.UserVo;
 import com.macys.valuesobjects.containers.BaseContainerVo;
+import com.macys.valuesobjects.containers.LabContainerVo;
 import com.macys.valuesobjects.containers.UserContainerVo;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -115,6 +124,100 @@ public class PublicRestController extends BaseRestController{
 			empContainer.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
 			empContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
 			return empContainer;
+		}
+	}
+	
+	@POST
+	@Path("/labs")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Create Lab",response=LabContainerVo.class)
+	public BaseContainerVo createLab(
+			@ApiParam(value="Name",required=true) 			@FormParam("name") String name, 
+			@ApiParam(value="Description",required=true) 	@FormParam("description") String description,
+			@ApiParam(value="Location",required=true) 		@FormParam("location") String location){
+
+		LabContainerVo labContainer = new LabContainerVo();
+		
+		try{
+			LabVo labvo 					= userService.createLab(name,description,location);
+			labContainer.meta.code 			= Constants.SUCCESS;
+			labContainer.data 				= labvo;
+			return labContainer;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			labContainer.meta.code 		= exc.getErrorCodeEnum().getCode();
+			labContainer.meta.error 	= exc.getErrorCodeEnum().getMessage();
+			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return labContainer;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			labContainer.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			labContainer.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return labContainer;
+		}
+	}
+	
+	@GET
+	@Path("/labs")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Get All Labs",response=LabContainerVo.class)
+	public BaseContainerVo getLabs(){
+
+		LabContainerVo labContainer = new LabContainerVo();
+		
+		try{
+			List<LabVo> labs 				= userService.getAllLabs();
+			labContainer.meta.code 			= Constants.SUCCESS;
+			labContainer.dataList 			= labs;
+			return labContainer;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			labContainer.meta.code 		= exc.getErrorCodeEnum().getCode();
+			labContainer.meta.error 	= exc.getErrorCodeEnum().getMessage();
+			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return labContainer;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			labContainer.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			labContainer.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return labContainer;
+		}
+	}
+	
+	@PUT
+	@Path("/labs/{labuuid}/users/{useruuid}")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Assign Lab To User",response=MetaVo.class)
+	public MetaVo assignLabToUser(
+			@ApiParam(value="LabUuid",required=true) @PathParam("labuuid") String labuuid,
+			@ApiParam(value="UserUuid",required=true) @PathParam("useruuid") String useruuid){
+		
+		MetaVo meta = new MetaVo();
+		
+		try{
+			userService.assignLabToUser(labuuid,useruuid);
+			meta.code 			= Constants.SUCCESS;
+			return meta;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			meta.code 		= exc.getErrorCodeEnum().getCode();
+			meta.error 		= exc.getErrorCodeEnum().getMessage();
+			meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return meta;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return meta;
 		}
 	}
 	

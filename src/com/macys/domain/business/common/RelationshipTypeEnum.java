@@ -2,9 +2,7 @@ package com.macys.domain.business.common;
 
 public enum RelationshipTypeEnum {
 	
-	COMPANY_EMPLOYEE("Company_Employee",0),
-	COMPANY_PROJECT("Company_Project",1),
-	EMPLOYEE_MESSAGE("Employee_Message",2);
+	LAB_USER("Lab_User",0);
 	
 	String relationshipName;
 	int code;

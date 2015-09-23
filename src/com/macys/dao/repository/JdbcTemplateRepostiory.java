@@ -17,7 +17,7 @@ public class JdbcTemplateRepostiory extends JdbcDaoSupport {
 	
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
-	public JdbcTemplateRepostiory(){
+	public JdbcTemplateRepostiory(){ 
 		
 	}
 	

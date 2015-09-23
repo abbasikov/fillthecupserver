@@ -27,6 +27,8 @@ public interface DAO {
 	public List<String> findUuidsByMetadata(BusinessObjectTypeEnum type, String name, String value);
 	
 	public List<Relationship> findChildren(String parentUuid);
+	
+	public List<Relationship> findRelationshipByChildUuidAndType(String childUuid, String type);
 
 	public BusinessObject findBusinessObjectByMetadata(BusinessObjectTypeEnum type,String metadataName, String metadataValue) throws ServiceException;
 	

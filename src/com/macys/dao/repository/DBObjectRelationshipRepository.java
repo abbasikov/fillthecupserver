@@ -20,6 +20,10 @@ public interface DBObjectRelationshipRepository extends CrudRepository<DBObjectR
 	@Query("select u from DBObjectRelationship u where u.pk.pUuid = ?1")
 	List<DBObjectRelationship> findChildren(String parentUuid);
 	
+	@Query("select u from DBObjectRelationship u where u.pk.cUuid = ?1 and u.pk.relationshipType = ?2")
+	List<DBObjectRelationship> findRelationshipByChildUuidAndType(String childUuid,String type);
+	
+	
 	@Query("select u from DBObjectRelationship u where u.pk.pUuid = ?1 and u.pk.relationshipType = ?2")
 	List<DBObjectRelationship> findChildrenWithRelationshipType(String parentUuid, String relationshipType);
 	

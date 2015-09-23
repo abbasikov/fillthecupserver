@@ -125,9 +125,9 @@
 		<property name="resourcePackage" 	value="com.macys.rest" />
 		<property name="version" 			value="1.0" />
 		<!-- <property name="basePath" 			value="http://localhost:9090/fillthecup" /> -->
-		<property name="basePath" 			value="https://jbossews-abbasikov.rhcloud.com/fillthecup" />
+		<property name="basePath" 			value="https://jbossews-abbasikov.rhcloud.com/fillthecupserver" />
 		<property name="title" 				value="Swagger UI FillTheCup" />
-		<property name="description" 		value="FillTheCup Project REST API Documentation." />
+		<property name="description" 		value="FillTheCupServer Project REST API Documentation." />
 		<property name="contact" 			value="umair.abbasi@macys.com" />
 		<property name="scan" 				value="true" />
 	</bean>
