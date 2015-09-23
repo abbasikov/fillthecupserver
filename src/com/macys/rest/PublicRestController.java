@@ -190,13 +190,13 @@ public class PublicRestController extends BaseRestController{
 		}
 	}
 	
-	@PUT
-	@Path("/labs/{labuuid}/users/{useruuid}")
+	@POST
+	@Path("/assignLabToUser")
 	@Produces( MediaType.APPLICATION_JSON )
 	@ApiOperation(value = "Assign Lab To User",response=MetaVo.class)
 	public MetaVo assignLabToUser(
-			@ApiParam(value="LabUuid",required=true) @PathParam("labuuid") String labuuid,
-			@ApiParam(value="UserUuid",required=true) @PathParam("useruuid") String useruuid){
+			@ApiParam(value="LabUuid"	,required=true) 	@FormParam("labuuid") 	String labuuid,
+			@ApiParam(value="UserUuid"	,required=true) 	@FormParam("useruuid") 	String useruuid){
 		
 		MetaVo meta = new MetaVo();
 		

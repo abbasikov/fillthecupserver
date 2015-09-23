@@ -156,9 +156,11 @@ public class UserService {
 		List<LabVo> listToReturn = new ArrayList<LabVo>();
 		List<BusinessObject> businessObjects = dao.findBusinessObjectsByType(BusinessObjectTypeEnum.LAB);
 		
-		for (BusinessObject businessObject : businessObjects) {
-			Lab lab = (Lab)businessObject;
-			listToReturn.add((LabVo)lab.createDTO());
+		if(businessObjects != null){
+			for (BusinessObject businessObject : businessObjects) {
+				Lab lab = (Lab)businessObject;
+				listToReturn.add((LabVo)lab.createDTO());
+			}
 		}
 		
 		return listToReturn;
