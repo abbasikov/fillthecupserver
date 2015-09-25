@@ -20,48 +20,22 @@ public class UserImpl extends BusinessObjectImpl implements User{
 	}
 	
 	@PersistentMetadata
-	public String firstName;
+	private String userName;
 	
 	@PersistentMetadata
-	public String lastName;
+	private String password;
 	
 	@PersistentMetadata
-	public String email;
-	
-	@PersistentMetadata
-	public String password;
-	
-	@PersistentMetadata
-	public String isSuperAdmin;
+	private String isSuperAdmin;
 	
 	@Override
-	public String getFirstName() {
-		return firstName;
+	public String getUserName() {
+		return userName;
 	}
 
 	@Override
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	@Override
-	public String getLastName() {
-		return lastName;
-	}
-
-	@Override
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	@Override
-	public String getEmail() {
-		return email;
-	}
-
-	@Override
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	@Override
@@ -86,16 +60,15 @@ public class UserImpl extends BusinessObjectImpl implements User{
 
 	@Override
 	public BaseDTO createDTO(){
+		
 		UserVo vo = new UserVo();
 		vo.name = this.getName();
 		vo.type = this.getType();
 		vo.uuid = this.getUuid();
 		vo.createdOnISO8601	= AppUtils.getDateISO8601(this.getCreatedOn());
 		
-		vo.firstName 	= this.firstName;
-		vo.lastName 	= this.lastName;
-		vo.email  		= this.email;
-		vo.isSuperAdmin = StringUtils.isBlank(this.isSuperAdmin) ? "false":this.isSuperAdmin;
+		vo.username		= this.getUserName();
+		vo.isSuperAdmin = StringUtils.isBlank(this.getIsSuperAdmin()) ? "false":this.getIsSuperAdmin();
 		
 		return vo;
 	}

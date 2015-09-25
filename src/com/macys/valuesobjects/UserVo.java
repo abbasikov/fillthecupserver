@@ -8,21 +8,9 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 public class UserVo extends BaseDTO{
 	
-	@JsonProperty("firstName")
 	@JsonSerialize(include=Inclusion.NON_NULL)
-	public String firstName;
-	
-	@JsonProperty("lastName")
-	@JsonSerialize(include=Inclusion.NON_NULL)
-	public String lastName;
-	
-	@JsonProperty("email")
-	@JsonSerialize(include=Inclusion.NON_NULL)
-	public String email;
-	
-	@JsonSerialize(include=Inclusion.NON_NULL)
-	@JsonProperty("password")
-	public String password;
+	@JsonProperty("username")
+	public String username;
 	
 	@JsonProperty("isSuperAdmin")
 	@JsonSerialize(include=Inclusion.NON_NULL)

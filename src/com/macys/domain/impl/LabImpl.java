@@ -2,7 +2,6 @@ package com.macys.domain.impl;
 
 import com.macys.dao.database.DBObject;
 import com.macys.domain.Lab;
-import com.macys.domain.business.BusinessObject;
 import com.macys.domain.business.BusinessObjectImpl;
 import com.macys.domain.business.common.BusinessObjectTypeEnum;
 import com.macys.domain.business.common.annotations.PersistentBusinessObject;
@@ -17,6 +16,10 @@ public class LabImpl extends BusinessObjectImpl implements Lab {
 		super(dbObject);
 		// TODO Auto-generated constructor stub
 	}
+	
+	private String managerName;
+	
+	private String pdmName;
 	
 	private String description;
 	
@@ -43,6 +46,26 @@ public class LabImpl extends BusinessObjectImpl implements Lab {
 	}
 	
 	@Override
+	public String getManagerName() {
+		return managerName;
+	}
+
+	@Override
+	public void setManagerName(String managerName) {
+		this.managerName = managerName;
+	}
+
+	@Override
+	public String getPdmName() {
+		return pdmName;
+	}
+
+	@Override
+	public void setPdmName(String pdmName) {
+		this.pdmName = pdmName;
+	}
+
+	@Override
 	public BaseDTO createDTO(){
 		LabVo vo = new LabVo();
 		vo.name = this.getName();
@@ -52,6 +75,8 @@ public class LabImpl extends BusinessObjectImpl implements Lab {
 		
 		vo.description 	= this.getDescription();
 		vo.location		= this.getLocation();
+		vo.pdmName		= this.getPdmName();
+		vo.managerName	= this.getManagerName();
 		
 		return vo;
 	}

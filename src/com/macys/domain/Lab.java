@@ -12,4 +12,12 @@ public interface Lab extends BusinessObject{
 
 	public abstract String getDescription();
 
+	public abstract void setPdmName(String pdmName);
+
+	public abstract String getPdmName();
+
+	public abstract void setManagerName(String managerName);
+
+	public abstract String getManagerName();
+
 }

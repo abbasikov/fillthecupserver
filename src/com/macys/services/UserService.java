@@ -1,9 +1,7 @@
 package com.macys.services;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
 import com.macys.dao.DAO;
 import com.macys.domain.Lab;
 import com.macys.domain.User;
@@ -19,40 +17,22 @@ import com.macys.utils.ServiceUtils;
 import com.macys.valuesobjects.LabVo;
 import com.macys.valuesobjects.UserVo;
 
+/**
+ * @author Umair ABBASI
+ *
+ */
 public class UserService {
 	
 	private DAO dao;
 	
-	public UserVo fetchUser(String email,String password) throws ServiceException{
+	public UserVo login(String userName, String password) throws ServiceException{
 		try{
-			User user =  (User)dao.findBusinessObjectByMetadata(BusinessObjectTypeEnum.USER, "email", email);
-			
-			if(user == null)
-				throw new ServiceException("User not found by email:"+email,ErrorCodeEnum.USER_NOT_FOUND);
-			
-			if(EncryptionUtils.checkPassword(password, user.getPassword())){
-				return (UserVo)user.createDTO();
-			}
-			else{
-				throw new ServiceException("Invalid Credentials",ErrorCodeEnum.INVALID_CREDENTIALS);
-			}
-		}
-		catch(ServiceException exc){
-			throw exc;
-		}
-		catch(Exception exc){
-			throw new ServiceException(exc.getMessage(),exc,ErrorCodeEnum.INTERNAL_SERVER_ERROR);
-		}		
-	}
-	
-	public UserVo login(String email, String password) throws ServiceException{
-		try{
-			ServiceUtils.verifyNotBlank(email, "Email");
+			ServiceUtils.verifyNotBlank(userName, "UserName");
 			ServiceUtils.verifyNotBlank(password, "Password");
 			
-			List<String> userUuids = dao.findUuidsByMetadata(BusinessObjectTypeEnum.USER, "email", email);
+			List<String> userUuids = dao.findUuidsByMetadata(BusinessObjectTypeEnum.USER, "userName", userName);
 			if(userUuids == null || userUuids.size() < 1) {
-				throw new ServiceException("User with email:"+email+" not found.",ErrorCodeEnum.USER_NOT_FOUND);
+				throw new ServiceException("User with userName:"+userName+" not found.",ErrorCodeEnum.USER_NOT_FOUND);
 			}
 			
 			User user = (User) dao.getBusinessObjectByUuid(userUuids.get(0));
@@ -81,74 +61,67 @@ public class UserService {
 		}
 	}
 	
-	public UserVo createUser(UserVo userVo) throws ServiceException{
+	private LabVo createLab(String labName, String managerName,String pdmName)throws ServiceException {
+		ServiceUtils.verifyNotBlank(labName, 		"labName");
+		ServiceUtils.verifyNotBlank(managerName, 	"managerName");
 		
-		try{
-			ServiceUtils.verifyNotBlank(userVo.firstName, "FirstName");
-			ServiceUtils.verifyNotBlank(userVo.email, "Email");
-			ServiceUtils.verifyNotBlank(userVo.password, "Password");
-			
-			//check if a user with this email already exists
-			List<String> userUuids = dao.findUuidsByMetadata(BusinessObjectTypeEnum.USER, "email", userVo.email);
-			
-			//if a user with this email already exists, then dont create a new one
-			if(userUuids.size() > 0) {
-				throw new ServiceException("User email:"+userVo.email+" already exists.",ErrorCodeEnum.EMAIL_ALREADY_EXISTS);
-			}
-
-			
-			
-			User user = (User)dao.emptyBusinessObject(BusinessObjectTypeEnum.USER, userVo.firstName+" "+userVo.lastName, Constants.SYSTEM_USER);
-			user.setFirstName(userVo.firstName);
-			user.setLastName(userVo.lastName);
-			user.setEmail(userVo.email);
-			user.setPassword(EncryptionUtils.encryptPassword( userVo.password ));
-			
-			//Saving User
-			user = (User)dao.saveBusinessObject(user);
-			
-			
-			return (UserVo)user.createDTO();
-		}	
-		catch(ServiceException exc){
-			throw exc;
+		//check if a user with this labname already exists
+		List<String> userUuids = dao.findUuidsByMetadata(BusinessObjectTypeEnum.LAB, "labName", labName);
+				
+		if(userUuids.size() > 0) {
+			throw new ServiceException("LabName:"+labName+" already exists.",ErrorCodeEnum.LABNAME_ALREADY_EXISTS);
 		}
-		catch(Exception exc){
-			throw new ServiceException(exc.getMessage(), exc, ErrorCodeEnum.INTERNAL_SERVER_ERROR);
-		}
-	}
-	
-	public void deleteUserByUuid(String uuid) throws ServiceException{
-		try{
-			dao.deleteBusinessObjectByUuid(uuid);}
-		catch(ServiceException exc){
-			throw exc;
-		}
-		catch (Exception e) {
-			throw new ServiceException(e.getMessage(), e, ErrorCodeEnum.INTERNAL_SERVER_ERROR);
-		}
-	}
-	
-	public UserVo registerAndSendEmail(UserVo userVo)throws ServiceException {
-		UserVo vo = createUser(userVo);
-		return vo;
-	}
-	
-	public void setDao(DAO dao) {
-		this.dao = dao;
-	}
-
-	public LabVo createLab(String name, String description, String location) throws ServiceException {
-		ServiceUtils.verifyNotBlank("name", "name");
 		
-		Lab lab = (Lab)dao.emptyBusinessObject(BusinessObjectTypeEnum.LAB, name, Constants.SYSTEM_USER);
-		lab.setDescription(description);
-		lab.setLocation(location);
+		Lab lab = (Lab)dao.emptyBusinessObject(BusinessObjectTypeEnum.LAB, labName, Constants.SYSTEM_USER);
+		lab.setManagerName(managerName);
+		lab.setPdmName(pdmName);
+		lab.setDescription("");
+		lab.setLocation("");
 		
 		lab = (Lab)dao.saveBusinessObject(lab);
-		LabVo labVo = (LabVo)lab.createDTO();
 		
-		return labVo;
+		return (LabVo)lab.createDTO();
+		
+	}
+	
+	private UserVo createUser(String userName, String password, String isSuperAdmin) throws ServiceException{
+		ServiceUtils.verifyNotBlank(userName, 		"userName");
+		ServiceUtils.verifyNotBlank(password, 		"password");
+		
+		//check if a user with this username already exists
+		List<String> userUuids = dao.findUuidsByMetadata(BusinessObjectTypeEnum.USER, "userName", userName);
+		
+		//if a user with this username already exists, then dont create a new one
+		if(userUuids.size() > 0) {
+			throw new ServiceException("Username:"+userName+" already exists.",ErrorCodeEnum.USERNAME_ALREADY_EXISTS);
+		}
+		
+		User user = (User)dao.emptyBusinessObject(BusinessObjectTypeEnum.USER, userName, Constants.SYSTEM_USER);
+		user.setUserName(userName);
+		user.setPassword(EncryptionUtils.encryptPassword( password ));
+		user.setIsSuperAdmin(isSuperAdmin);
+		
+		user = (User)dao.saveBusinessObject(user);
+		
+		return (UserVo)user.createDTO();
+	}
+
+	
+	public UserVo createLabAndUser(String labName, String managerName, String pdmName,String userName,String password, String isSuperAdmin) throws ServiceException {
+		
+		//First Create The User
+		UserVo userVo = createUser(userName, password, isSuperAdmin);
+		
+		//Second Create The Lab
+		LabVo labVo   = createLab(labName, managerName, pdmName);
+		
+		//Save the relationship
+		dao.saveRelationship(labVo.uuid, userVo.uuid, RelationshipTypeEnum.LAB_USER.toString(), Constants.SYSTEM_USER);
+		
+		userVo.labs = new ArrayList<LabVo>();
+		userVo.labs.add(labVo);
+		
+		return userVo;
 	}
 
 	public List<LabVo> getAllLabs() throws ServiceException{
@@ -165,20 +138,11 @@ public class UserService {
 		
 		return listToReturn;
 	}
-
-	public void assignLabToUser(String labuuid, String useruuid) throws ServiceException {
-		
-		Lab lab = (Lab) dao.getBusinessObjectByUuid(labuuid);
-		if(lab == null)
-			throw new ServiceException("Invalid labuuid.", ErrorCodeEnum.INVALID_BUSINESS_OBJECT_ID);
-		
-		User user = (User)dao.getBusinessObjectByUuid(useruuid);
-		if(user == null)
-			throw new ServiceException("Invalid useruuid.", ErrorCodeEnum.INVALID_BUSINESS_OBJECT_ID);
-		
-		dao.saveRelationship(labuuid, useruuid, RelationshipTypeEnum.LAB_USER.toString(), Constants.SYSTEM_USER);
-		
+	
+	public void setDao(DAO dao) {
+		this.dao = dao;
 	}
+	
 		
 }
 
