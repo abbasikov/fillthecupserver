@@ -5,6 +5,7 @@ import com.macys.domain.Lab;
 import com.macys.domain.business.BusinessObjectImpl;
 import com.macys.domain.business.common.BusinessObjectTypeEnum;
 import com.macys.domain.business.common.annotations.PersistentBusinessObject;
+import com.macys.domain.business.common.annotations.PersistentMetadata;
 import com.macys.utils.AppUtils;
 import com.macys.valuesobjects.BaseDTO;
 import com.macys.valuesobjects.LabVo;
@@ -17,12 +18,16 @@ public class LabImpl extends BusinessObjectImpl implements Lab {
 		// TODO Auto-generated constructor stub
 	}
 	
+	@PersistentMetadata
 	private String managerName;
 	
+	@PersistentMetadata
 	private String pdmName;
 	
+	@PersistentMetadata
 	private String description;
 	
+	@PersistentMetadata
 	private String location;
 
 	@Override

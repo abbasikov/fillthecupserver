@@ -65,13 +65,6 @@ public class UserService {
 		ServiceUtils.verifyNotBlank(labName, 		"labName");
 		ServiceUtils.verifyNotBlank(managerName, 	"managerName");
 		
-		//check if a user with this labname already exists
-		List<String> userUuids = dao.findUuidsByMetadata(BusinessObjectTypeEnum.LAB, "labName", labName);
-				
-		if(userUuids.size() > 0) {
-			throw new ServiceException("LabName:"+labName+" already exists.",ErrorCodeEnum.LABNAME_ALREADY_EXISTS);
-		}
-		
 		Lab lab = (Lab)dao.emptyBusinessObject(BusinessObjectTypeEnum.LAB, labName, Constants.SYSTEM_USER);
 		lab.setManagerName(managerName);
 		lab.setPdmName(pdmName);
