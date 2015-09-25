@@ -125,7 +125,18 @@ public class UserService {
 		if(businessObjects != null){
 			for (BusinessObject businessObject : businessObjects) {
 				Lab lab = (Lab)businessObject;
-				listToReturn.add((LabVo)lab.createDTO());
+				LabVo labVo = (LabVo)lab.createDTO();
+				
+				//Get Users of lab
+				labVo.users = new ArrayList<UserVo>();
+				List<Relationship> relations =  dao.findChildren(lab.getUuid());
+				for (Relationship relationship : relations) {
+					String userUuid =  relationship.getChildUuid();
+					User user = (User)dao.getBusinessObjectByUuid(userUuid);
+					labVo.users.add((UserVo)user.createDTO());
+				}
+				
+				listToReturn.add(labVo);
 			}
 		}
 		
