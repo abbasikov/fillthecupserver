@@ -100,7 +100,7 @@ public class UserService {
 	}
 
 	
-	public UserVo createLabAndUser(String labName, String managerName, String pdmName,String userName,String password, String isSuperAdmin) throws ServiceException {
+	public LabVo createLabAndUser(String labName, String managerName, String pdmName,String userName,String password, String isSuperAdmin) throws ServiceException {
 		
 		//First Create The User
 		UserVo userVo = createUser(userName, password, isSuperAdmin);
@@ -111,10 +111,10 @@ public class UserService {
 		//Save the relationship
 		dao.saveRelationship(labVo.uuid, userVo.uuid, RelationshipTypeEnum.LAB_USER.toString(), Constants.SYSTEM_USER);
 		
-		userVo.labs = new ArrayList<LabVo>();
-		userVo.labs.add(labVo);
+		labVo.users = new ArrayList<UserVo>();
+		labVo.users.add(userVo);
 		
-		return userVo;
+		return labVo;
 	}
 
 	public List<LabVo> getAllLabs() throws ServiceException{

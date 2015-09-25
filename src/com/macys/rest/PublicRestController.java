@@ -52,7 +52,7 @@ public class PublicRestController extends BaseRestController{
 	@POST
 	@Path("/labs")
 	@Produces( MediaType.APPLICATION_JSON )
-	@ApiOperation(value = "Register Lab",response=UserContainerVo.class)
+	@ApiOperation(value = "Register Lab",response=LabContainerVo.class)
 	public BaseContainerVo createLab(
 			@ApiParam(value="Lab Name",		required=true) 	@FormParam("labName") 			String labName, 
 			@ApiParam(value="Manager Name",	required=true)	@FormParam("managerName") 		String managerName, 
@@ -62,28 +62,28 @@ public class PublicRestController extends BaseRestController{
 			@ApiParam(value="IsSuperAdmin",	required=true)	@FormParam("isSuperAdmin") 		String isSuperAdmin
 									) {
 		
-		UserContainerVo userContainer = new UserContainerVo();
-		
+		LabContainerVo labContainer = new LabContainerVo();
+		 
 		try{
 			
-			UserVo userVo 				= userService.createLabAndUser(labName,managerName,pdmName,userName,password,isSuperAdmin);
-			userContainer.meta.code 	= Constants.SUCCESS;
-			userContainer.data 			= userVo;
-			return userContainer;
+			LabVo labVo 				= userService.createLabAndUser(labName,managerName,pdmName,userName,password,isSuperAdmin);
+			labContainer.meta.code 	= Constants.SUCCESS;
+			labContainer.data 			= labVo;
+			return labContainer;
 		}
 		catch(ServiceException exc){
 			exc.printStackTrace(System.err);
-			userContainer.meta.code 	= exc.getErrorCodeEnum().getCode();
-			userContainer.meta.error 	= exc.getErrorCodeEnum().getMessage();
-			userContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return userContainer;
+			labContainer.meta.code 	= exc.getErrorCodeEnum().getCode();
+			labContainer.meta.error 	= exc.getErrorCodeEnum().getMessage();
+			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return labContainer;
 		}
 		catch(Exception exc){
 			exc.printStackTrace(System.err);
-			userContainer.meta.code 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
-			userContainer.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
-			userContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return userContainer;
+			labContainer.meta.code 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			labContainer.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return labContainer;
 		}
 	}
 	
