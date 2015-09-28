@@ -315,6 +315,7 @@ public class UserService {
 		if(businessObjects != null){
 			log.info(methodName+"releasecups found for labuuid:"+labUuid);
 			for (BusinessObject businessObject : businessObjects) {
+				log.info(methodName+"inside loop. business object type:"+businessObject.getType());
 				ReleaseCup releaseCup 		= (ReleaseCup)businessObject;
 				ReleaseCupVo releaseCupVo	= (ReleaseCupVo)releaseCup.createDTO();
 				log.info(methodName+"releasecupvo found IsNULL:"+(releaseCupVo == null));
