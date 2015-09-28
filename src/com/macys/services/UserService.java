@@ -3,6 +3,8 @@ package com.macys.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.macys.dao.DAO;
 import com.macys.domain.Lab;
 import com.macys.domain.Release;
@@ -29,6 +31,8 @@ import com.macys.valuesobjects.UserVo;
  *
  */
 public class UserService {
+	
+	protected final Logger log = Logger.getLogger(UserService.class);
 	
 	private DAO dao;
 	
@@ -296,22 +300,28 @@ public class UserService {
 	}
 	
 	public List<ReleaseCupVo> getAllReleaseCupsByLabUuid(String labUuid) throws ServiceException{
+		String methodName = "getAllReleaseCupsByLabUuid: ";
+		log.info("[START] getAllReleaseCupsByLabUuid");
 		ServiceUtils.verifyNotBlank(labUuid, 		"labUuid");
-		
+		log.info(methodName+"Getting lab uuid:"+labUuid);
 		Lab lab = (Lab)dao.getBusinessObjectByUuid(labUuid);
 		if(lab == null){
 			throw new ServiceException("Invalid Lab Uuid", ErrorCodeEnum.LAB_NOT_FOUND);
 		}
-		
+		log.info(methodName+"lab found");
 		List<ReleaseCupVo> listToReturn = new ArrayList<ReleaseCupVo>();
+		log.info(methodName+"finding releasecups by metadeta labuuid:"+labUuid);
 		List<BusinessObject> businessObjects =  dao.findBusinessObjectsByMetadata(BusinessObjectTypeEnum.RELEASECUP, "labUuid", labUuid);
 		if(businessObjects != null){
+			log.info(methodName+"releasecups found for labuuid:"+labUuid);
 			for (BusinessObject businessObject : businessObjects) {
 				ReleaseCup releaseCup 		= (ReleaseCup)businessObject;
 				ReleaseCupVo releaseCupVo	= (ReleaseCupVo)releaseCup.createDTO();
+				log.info(methodName+"releasecupvo found IsNULL:"+(releaseCupVo == null));
 				
 				Release release				= (Release)dao.getBusinessObjectByUuid(releaseCup.getReleaseUuid());
 				ReleaseVo releaseVo			= (ReleaseVo) release.createDTO();
+				log.info(methodName+"release found IsNULL:"+(releaseVo == null));
 				
 				releaseCupVo.release		= releaseVo;
 				releaseCupVo.lab			= (LabVo)lab.createDTO();
@@ -319,7 +329,7 @@ public class UserService {
 				listToReturn.add(releaseCupVo);
 			}
 		}
-		
+		log.info("[END] getAllReleaseCupsByLabUuid");
 		return listToReturn;
 	}
 
