@@ -13,5 +13,7 @@ public class LabVo extends BaseDTO{
 	public String location;
 	
 	public List<UserVo> users;
+	
+	public List<ReleaseCupVo> releaseCups;
 
 }

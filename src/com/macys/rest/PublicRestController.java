@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -24,12 +23,14 @@ import com.macys.exceptions.ServiceException;
 import com.macys.services.UserService;
 import com.macys.utils.Constants;
 import com.macys.valuesobjects.LabVo;
+import com.macys.valuesobjects.ReleaseCupVo;
 import com.macys.valuesobjects.ReleaseVo;
 import com.macys.valuesobjects.SystemComponentVo;
 import com.macys.valuesobjects.UserVo;
 import com.macys.valuesobjects.containers.BaseContainerVo;
 import com.macys.valuesobjects.containers.LabContainerVo;
 import com.macys.valuesobjects.containers.ReleaseContainerVo;
+import com.macys.valuesobjects.containers.ReleaseCupContainerVo;
 import com.macys.valuesobjects.containers.SystemComponentContainerVo;
 import com.macys.valuesobjects.containers.UserContainerVo;
 import com.wordnik.swagger.annotations.Api;
@@ -387,6 +388,68 @@ public class PublicRestController extends BaseRestController{
 		}
 	}
 	
+	
+	@POST
+	@Path("/releasecups")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Create Release Cup",response=ReleaseCupContainerVo.class)
+	public BaseContainerVo createReleaseCup(@ApiParam(value="releaseUuid",required=true) 		@FormParam("releaseUuid") 		String releaseUuid,
+											@ApiParam(value="labUuid",required=true) 			@FormParam("labUuid") 			String labUuid,
+											@ApiParam(value="availableDevDays",required=true) 	@FormParam("availableDevDays") 	String availableDevDays,
+											@ApiParam(value="devDays",required=true)			@FormParam("devDays")	 		String devDays,
+											@ApiParam(value="regressionDays",required=true) 	@FormParam("regressionDays")	String regressionDays){
+ 
+		ReleaseCupContainerVo container = new ReleaseCupContainerVo();
+		try{
+			ReleaseCupVo vo 		=  userService.createReleaseCup(releaseUuid,labUuid,availableDevDays,devDays,regressionDays);
+			container.meta.code 	= Constants.SUCCESS;
+			container.data			= vo;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= exc.getErrorCodeEnum().getCode();
+			container.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+	}
+	
+	@GET
+	@Path("/releasecups/{labUuid}")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Get All Release Cups By Lab Uuid",response=ReleaseCupContainerVo.class)
+	public BaseContainerVo getAllReleaseCupsByLabUuid(@ApiParam(value="labUuid",required=true) @PathParam("labUuid") String labUuid){
+ 
+		ReleaseCupContainerVo container = new ReleaseCupContainerVo();
+		try{
+			List<ReleaseCupVo> voList 	=  userService.getAllReleaseCupsByLabUuid(labUuid);
+			container.meta.code 		= Constants.SUCCESS;
+			container.dataList			= voList;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= exc.getErrorCodeEnum().getCode();
+			container.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+	}
 	
 	public void setUserService(UserService userService) {
 		this.userService = userService;

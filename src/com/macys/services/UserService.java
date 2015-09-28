@@ -6,6 +6,7 @@ import java.util.List;
 import com.macys.dao.DAO;
 import com.macys.domain.Lab;
 import com.macys.domain.Release;
+import com.macys.domain.ReleaseCup;
 import com.macys.domain.SystemComponent;
 import com.macys.domain.User;
 import com.macys.domain.business.BusinessObject;
@@ -18,6 +19,7 @@ import com.macys.utils.Constants;
 import com.macys.utils.EncryptionUtils;
 import com.macys.utils.ServiceUtils;
 import com.macys.valuesobjects.LabVo;
+import com.macys.valuesobjects.ReleaseCupVo;
 import com.macys.valuesobjects.ReleaseVo;
 import com.macys.valuesobjects.SystemComponentVo;
 import com.macys.valuesobjects.UserVo;
@@ -54,6 +56,11 @@ public class UserService {
 			for (Relationship relationship : relations) {
 				Lab lab = (Lab)dao.getBusinessObjectByUuid(  relationship.getParentUuid() );
 				userVo.labs.add((LabVo)lab.createDTO());
+			}
+			
+			//Get All Release Cups for Each lab of the user.
+			for (LabVo labvo : userVo.labs) {
+				labvo.releaseCups = getAllReleaseCupsByLabUuid(labvo.uuid);
 			}
 			
 			return userVo;
@@ -249,6 +256,68 @@ public class UserService {
 				listToReturn.add(releaseVo);
 			}
 		}
+		return listToReturn;
+	}
+
+	public ReleaseCupVo createReleaseCup(String releaseUuid, String labUuid, String availableDevDays, String devDays, String regressionDays) throws ServiceException {
+		
+		ServiceUtils.verifyNotBlank(releaseUuid, 		"releaseUuid");
+		ServiceUtils.verifyNotBlank(labUuid, 			"labUuid");
+		ServiceUtils.verifyNotBlank(availableDevDays, 	"availableDevDays");
+		ServiceUtils.verifyNotBlank(devDays, 			"devDays");
+		ServiceUtils.verifyNotBlank(regressionDays, 	"regressionDays");
+		
+		Release release = (Release)dao.getBusinessObjectByUuid(releaseUuid);
+		if(release == null){
+			throw new ServiceException("Invalid Release Uuid", ErrorCodeEnum.RELEASE_NOT_FOUND);
+		}
+		
+		Lab lab = (Lab)dao.getBusinessObjectByUuid(labUuid);
+		if(lab == null){
+			throw new ServiceException("Invalid Lab Uuid", ErrorCodeEnum.LAB_NOT_FOUND);
+		}
+		
+		ReleaseCup releaseCup = (ReleaseCup)dao.emptyBusinessObject(BusinessObjectTypeEnum.RELEASECUP, release.getName(), Constants.SYSTEM_USER);
+		releaseCup.setAvailableDevDays(availableDevDays);
+		releaseCup.setDevDays(devDays);
+		releaseCup.setRegressionDays(regressionDays);
+		releaseCup.setReleaseUuid(releaseUuid);
+		
+		//Saving the cup
+		releaseCup = (ReleaseCup)dao.saveBusinessObject(releaseCup);
+		
+		ReleaseCupVo cupVo 	= (ReleaseCupVo)releaseCup.createDTO();
+		cupVo.release		= (ReleaseVo)release.createDTO();
+		cupVo.lab			= (LabVo)lab.createDTO();
+		
+		return cupVo;
+	}
+	
+	public List<ReleaseCupVo> getAllReleaseCupsByLabUuid(String labUuid) throws ServiceException{
+		ServiceUtils.verifyNotBlank(labUuid, 		"labUuid");
+		
+		Lab lab = (Lab)dao.getBusinessObjectByUuid(labUuid);
+		if(lab == null){
+			throw new ServiceException("Invalid Lab Uuid", ErrorCodeEnum.LAB_NOT_FOUND);
+		}
+		
+		List<ReleaseCupVo> listToReturn = new ArrayList<ReleaseCupVo>();
+		List<BusinessObject> businessObjects =  dao.findBusinessObjectsByMetadata(BusinessObjectTypeEnum.RELEASECUP, "labUuid", labUuid);
+		if(businessObjects != null){
+			for (BusinessObject businessObject : businessObjects) {
+				ReleaseCup releaseCup 		= (ReleaseCup)businessObject;
+				ReleaseCupVo releaseCupVo	= (ReleaseCupVo)releaseCup.createDTO();
+				
+				Release release				= (Release)dao.getBusinessObjectByUuid(releaseCup.getReleaseUuid());
+				ReleaseVo releaseVo			= (ReleaseVo) release.createDTO();
+				
+				releaseCupVo.release		= releaseVo;
+				releaseCupVo.lab			= (LabVo)lab.createDTO();
+				
+				listToReturn.add(releaseCupVo);
+			}
+		}
+		
 		return listToReturn;
 	}
 

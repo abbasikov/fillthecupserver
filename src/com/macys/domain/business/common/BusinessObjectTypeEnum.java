@@ -10,7 +10,8 @@ public enum BusinessObjectTypeEnum {
 	USER("USER1","User"),
 	LAB("LLAB1","LLab"),
 	SYSTEM_COMPONENT("SYSCO","SystemComponent"),
-	RELEASE("RELSE","Release");
+	RELEASE("RELSE","Release"),
+	RELEASECUP("RELCP","ReleaseCup");
 
 	String type;
 	String interfaceName;
