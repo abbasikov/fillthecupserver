@@ -282,15 +282,17 @@ public class UserService {
 		releaseCup.setDevDays(devDays);
 		releaseCup.setRegressionDays(regressionDays);
 		releaseCup.setReleaseUuid(releaseUuid);
+		releaseCup.setLabUuid(labUuid);
+		
 		
 		//Saving the cup
 		releaseCup = (ReleaseCup)dao.saveBusinessObject(releaseCup);
 		
-		ReleaseCupVo cupVo 	= (ReleaseCupVo)releaseCup.createDTO();
-		cupVo.release		= (ReleaseVo)release.createDTO();
-		cupVo.lab			= (LabVo)lab.createDTO();
+		ReleaseCupVo releaseCupVo 	= (ReleaseCupVo)releaseCup.createDTO();
+		releaseCupVo.release		= (ReleaseVo)release.createDTO();
+		releaseCupVo.lab			= (LabVo)lab.createDTO();
 		
-		return cupVo;
+		return releaseCupVo;
 	}
 	
 	public List<ReleaseCupVo> getAllReleaseCupsByLabUuid(String labUuid) throws ServiceException{
