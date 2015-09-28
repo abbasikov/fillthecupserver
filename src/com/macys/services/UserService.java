@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.macys.dao.DAO;
 import com.macys.domain.Lab;
+import com.macys.domain.Release;
 import com.macys.domain.SystemComponent;
 import com.macys.domain.User;
 import com.macys.domain.business.BusinessObject;
@@ -17,6 +18,7 @@ import com.macys.utils.Constants;
 import com.macys.utils.EncryptionUtils;
 import com.macys.utils.ServiceUtils;
 import com.macys.valuesobjects.LabVo;
+import com.macys.valuesobjects.ReleaseVo;
 import com.macys.valuesobjects.SystemComponentVo;
 import com.macys.valuesobjects.UserVo;
 
@@ -150,16 +152,17 @@ public class UserService {
 	{	
 		dao.deleteBusinessObjectByUuid(labUuid);
 		List<Relationship> relations = dao.findChildren(labUuid);
-		for (Relationship relationship : relations) {
-			try{
-				dao.deleteRelationShip(relationship.getParentUuid(), relationship.getChildUuid(), RelationshipTypeEnum.enumFromName( relationship.getType()));
-				dao.deleteBusinessObjectByUuid(relationship.getChildUuid());
-			}
-			catch(Exception exc){
-				
+		if(relations != null){
+			for (Relationship relationship : relations) {
+				try{
+					dao.deleteRelationShip(relationship.getParentUuid(), relationship.getChildUuid(), RelationshipTypeEnum.enumFromName( relationship.getType()));
+					dao.deleteBusinessObjectByUuid(relationship.getChildUuid());
+				}
+				catch(Exception exc){
+					
+				}
 			}
 		}
-		
 	}
 	
 	public BusinessObject updateBusinessObject(String uuid, String names, String values) throws ServiceException {
@@ -207,8 +210,46 @@ public class UserService {
 		dao.deleteRelationShipByChildUuid(uuid, RelationshipTypeEnum.LAB_SYSTEMCOMPONENT);
 	}
 	
+	public void deleteBusinessObject(String uuid) throws ServiceException{
+		dao.deleteBusinessObjectByUuid(uuid);
+	}
+	
 	public void setDao(DAO dao) {
 		this.dao = dao;
+	}
+
+	public ReleaseVo createRelease(String name, String branchCutDate,String hardLockDate, String mcomDate, String bcomDate) throws ServiceException {
+		ServiceUtils.verifyNotBlank(name, 			"name");
+		ServiceUtils.verifyNotBlank(branchCutDate, 	"branchCutDate");
+		ServiceUtils.verifyNotBlank(hardLockDate, 	"hardLockDate");
+		ServiceUtils.verifyNotBlank(mcomDate, 		"mcomDate");
+		ServiceUtils.verifyNotBlank(bcomDate, 		"bcomDate");
+		
+		Release release = (Release)dao.emptyBusinessObject(BusinessObjectTypeEnum.RELEASE, name, Constants.SYSTEM_USER);
+		release.setBranchCutDate(branchCutDate);
+		release.setBranchHardLockDate(hardLockDate);
+		release.setMcomDate(mcomDate);
+		release.setBcomDate(bcomDate);
+		
+		release = (Release)dao.saveBusinessObject(release);
+		
+		return (ReleaseVo)release.createDTO();
+		
+	}
+
+	public List<ReleaseVo> getAllReleases() throws ServiceException {
+		// TODO Auto-generated method stub
+		List<ReleaseVo> listToReturn = new ArrayList<ReleaseVo>();
+		List<BusinessObject> businessObjects = dao.findBusinessObjectsByType(BusinessObjectTypeEnum.RELEASE);
+				
+		if(businessObjects != null){
+			for (BusinessObject businessObject : businessObjects) {
+				Release release 	= (Release)businessObject;
+				ReleaseVo releaseVo = (ReleaseVo)release.createDTO();
+				listToReturn.add(releaseVo);
+			}
+		}
+		return listToReturn;
 	}
 
 			

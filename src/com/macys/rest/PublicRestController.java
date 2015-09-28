@@ -24,10 +24,12 @@ import com.macys.exceptions.ServiceException;
 import com.macys.services.UserService;
 import com.macys.utils.Constants;
 import com.macys.valuesobjects.LabVo;
+import com.macys.valuesobjects.ReleaseVo;
 import com.macys.valuesobjects.SystemComponentVo;
 import com.macys.valuesobjects.UserVo;
 import com.macys.valuesobjects.containers.BaseContainerVo;
 import com.macys.valuesobjects.containers.LabContainerVo;
+import com.macys.valuesobjects.containers.ReleaseContainerVo;
 import com.macys.valuesobjects.containers.SystemComponentContainerVo;
 import com.macys.valuesobjects.containers.UserContainerVo;
 import com.wordnik.swagger.annotations.Api;
@@ -183,6 +185,34 @@ public class PublicRestController extends BaseRestController{
 	}
 	
 	@POST
+	@Path("/deletebusinessobject")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Delete Business Object",response=BaseContainerVo.class)
+	public BaseContainerVo deleteBusinessObject(@ApiParam(value="uuid",required=true) @FormParam("uuid") String uuid){
+ 
+		BaseContainerVo baseContainer = new BaseContainerVo();
+		try{
+			userService.deleteBusinessObject(uuid);
+			baseContainer.meta.code = Constants.SUCCESS;
+			return baseContainer;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			baseContainer.meta.code 		= exc.getErrorCodeEnum().getCode();
+			baseContainer.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return baseContainer;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			baseContainer.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			baseContainer.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return baseContainer;
+		}
+	}
+	
+	@POST
 	@Path("/updateobject")
 	@Produces( MediaType.APPLICATION_JSON )
 	public BaseContainerVo objectService(	@FormParam("uuid")		String uuid,
@@ -291,6 +321,69 @@ public class PublicRestController extends BaseRestController{
 			baseContainer.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
 			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
 			return baseContainer;
+		}
+	}
+	
+	@POST
+	@Path("/releases")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Create Release",response=ReleaseContainerVo.class)
+	public BaseContainerVo createRelease(	@ApiParam(value="name",required=true) 			@FormParam("name") 			String name,
+											@ApiParam(value="branchCutDate",required=true) 	@FormParam("branchCutDate") String branchCutDate,
+											@ApiParam(value="hardLockDate",required=true) 	@FormParam("hardLockDate") 	String hardLockDate,
+											@ApiParam(value="mcomDate",required=true)		@FormParam("mcomDate")	 	String mcomDate,
+											@ApiParam(value="bcomDate",required=true) 		@FormParam("bcomDate") 		String bcomDate){
+ 
+		ReleaseContainerVo container = new ReleaseContainerVo();
+		try{
+			ReleaseVo vo 		=  userService.createRelease(name,branchCutDate,hardLockDate,mcomDate,bcomDate);
+			container.meta.code = Constants.SUCCESS;
+			container.data		= vo;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= exc.getErrorCodeEnum().getCode();
+			container.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+	}
+	
+	
+	@GET
+	@Path("/releases")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Get All Release",response=ReleaseContainerVo.class)
+	public BaseContainerVo getAllReleases(){
+ 
+		ReleaseContainerVo container = new ReleaseContainerVo();
+		try{
+			List<ReleaseVo> list 	= userService.getAllReleases();
+			container.meta.code 	= Constants.SUCCESS;
+			container.dataList		= list;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= exc.getErrorCodeEnum().getCode();
+			container.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
 		}
 	}
 	
