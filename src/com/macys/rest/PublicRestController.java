@@ -6,7 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
@@ -22,9 +24,11 @@ import com.macys.exceptions.ServiceException;
 import com.macys.services.UserService;
 import com.macys.utils.Constants;
 import com.macys.valuesobjects.LabVo;
+import com.macys.valuesobjects.SystemComponentVo;
 import com.macys.valuesobjects.UserVo;
 import com.macys.valuesobjects.containers.BaseContainerVo;
 import com.macys.valuesobjects.containers.LabContainerVo;
+import com.macys.valuesobjects.containers.SystemComponentContainerVo;
 import com.macys.valuesobjects.containers.UserContainerVo;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -149,6 +153,147 @@ public class PublicRestController extends BaseRestController{
 			return labContainer;
 		}
 	}
+	
+	@POST
+	@Path("/deletelab")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Delete Lab",response=BaseContainerVo.class)
+	public BaseContainerVo deleteLab(@ApiParam(value="uuid",required=true) @FormParam("uuid") String uuid){
+ 
+		BaseContainerVo baseContainer = new BaseContainerVo();
+		try{
+			userService.deleteLab(uuid);
+			baseContainer.meta.code = Constants.SUCCESS;
+			return baseContainer;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			baseContainer.meta.code 		= exc.getErrorCodeEnum().getCode();
+			baseContainer.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return baseContainer;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			baseContainer.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			baseContainer.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return baseContainer;
+		}
+	}
+	
+	@POST
+	@Path("/updateobject")
+	@Produces( MediaType.APPLICATION_JSON )
+	public BaseContainerVo objectService(	@FormParam("uuid")		String uuid,
+											@FormParam("names") 	String names, 
+											@FormParam("values") 	String values) {
+		BaseContainerVo baseContainer = new BaseContainerVo();
+		try{
+			userService.updateBusinessObject(uuid,names,values);
+			baseContainer.meta.code = Constants.SUCCESS;
+			return baseContainer;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			baseContainer.meta.code 		= exc.getErrorCodeEnum().getCode();
+			baseContainer.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return baseContainer;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			baseContainer.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			baseContainer.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return baseContainer;
+		}
+	}
+	
+	@POST
+	@Path("/systemcomponents")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Create System Component",response=SystemComponentVo.class)
+	public BaseContainerVo createSystemComponents(@ApiParam(value="name",required=true) @FormParam("name") String name){
+		SystemComponentContainerVo container = new SystemComponentContainerVo();
+		try{
+			SystemComponentVo vo 	= userService.createSystemComponent(name);
+			container.meta.code 	= Constants.SUCCESS;
+			container.data 			= vo;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= exc.getErrorCodeEnum().getCode();
+			container.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+	}
+	
+	@GET
+	@Path("/systemcomponents")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Get All System Components",response=SystemComponentVo.class)
+	public BaseContainerVo getAllSystemComponents(){
+		SystemComponentContainerVo container = new SystemComponentContainerVo();
+		try{
+			List<SystemComponentVo> voList 	= userService.getAllSystemComponents();
+			container.meta.code 			= Constants.SUCCESS;
+			container.dataList 				= voList;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= exc.getErrorCodeEnum().getCode();
+			container.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			container.meta.details		= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details		= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+	}
+	
+	@POST
+	@Path("/deletesystemcomponent")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Delete SystemComponent",response=BaseContainerVo.class)
+	public BaseContainerVo deleteSystemComponenet(@ApiParam(value="uuid",required=true) @FormParam("uuid") String uuid){
+ 
+		BaseContainerVo baseContainer = new BaseContainerVo();
+		try{
+			userService.deleteSystemComponent(uuid);
+			baseContainer.meta.code = Constants.SUCCESS;
+			return baseContainer;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			baseContainer.meta.code 		= exc.getErrorCodeEnum().getCode();
+			baseContainer.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return baseContainer;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			baseContainer.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			baseContainer.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return baseContainer;
+		}
+	}
+	
 	
 	public void setUserService(UserService userService) {
 		this.userService = userService;

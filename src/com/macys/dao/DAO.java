@@ -45,4 +45,8 @@ public interface DAO {
 	public BusinessObject updatedBusinessObjectByMetadata(String uuid, String[] names, String[] values) throws ServiceException;
 	
 	public List<BusinessObject> findBusinessObjectsByType(BusinessObjectTypeEnum type) throws ServiceException;
+	
+	public void deleteRelationShip(String pUuid, String cUuid, RelationshipTypeEnum relationshipType) throws ServiceException;
+	
+	public void deleteRelationShipByChildUuid(String cUuid, RelationshipTypeEnum relationshipType) throws ServiceException;
 }

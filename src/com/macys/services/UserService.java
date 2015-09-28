@@ -2,8 +2,10 @@ package com.macys.services;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.macys.dao.DAO;
 import com.macys.domain.Lab;
+import com.macys.domain.SystemComponent;
 import com.macys.domain.User;
 import com.macys.domain.business.BusinessObject;
 import com.macys.domain.business.common.BusinessObjectTypeEnum;
@@ -15,6 +17,7 @@ import com.macys.utils.Constants;
 import com.macys.utils.EncryptionUtils;
 import com.macys.utils.ServiceUtils;
 import com.macys.valuesobjects.LabVo;
+import com.macys.valuesobjects.SystemComponentVo;
 import com.macys.valuesobjects.UserVo;
 
 /**
@@ -143,10 +146,71 @@ public class UserService {
 		return listToReturn;
 	}
 	
+	public void deleteLab(String labUuid)throws ServiceException
+	{	
+		dao.deleteBusinessObjectByUuid(labUuid);
+		List<Relationship> relations = dao.findChildren(labUuid);
+		for (Relationship relationship : relations) {
+			try{
+				dao.deleteRelationShip(relationship.getParentUuid(), relationship.getChildUuid(), RelationshipTypeEnum.enumFromName( relationship.getType()));
+				dao.deleteBusinessObjectByUuid(relationship.getChildUuid());
+			}
+			catch(Exception exc){
+				
+			}
+		}
+		
+	}
+	
+	public BusinessObject updateBusinessObject(String uuid, String names, String values) throws ServiceException {
+		try{
+			String[] namesArray = names.split(",");
+			String[] valuesArray= values.split(",");
+			
+			BusinessObject businessObject = dao.updatedBusinessObjectByMetadata(uuid, namesArray, valuesArray);
+			if(businessObject == null)
+				throw new ServiceException("Business object not found", ErrorCodeEnum.BUSINESS_OBJECT_NOT_FOUND);
+			
+			return businessObject;
+		
+		}
+		catch(ServiceException exc){
+			throw exc;
+		}
+		catch (Exception e) {
+			throw new ServiceException(e.getMessage(), e, ErrorCodeEnum.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	public SystemComponentVo createSystemComponent(String name) throws ServiceException {
+		ServiceUtils.verifyNotBlank(name, 		"name");
+		SystemComponent systemComponent = (SystemComponent)dao.emptyBusinessObject(BusinessObjectTypeEnum.SYSTEM_COMPONENT, name,Constants.SYSTEM_USER);
+		systemComponent.setDescription("");
+		systemComponent = (SystemComponent) dao.saveBusinessObject(systemComponent);
+		return (SystemComponentVo)systemComponent.createDTO();
+	}
+	
+	public List<SystemComponentVo> getAllSystemComponents()throws ServiceException {
+		List<SystemComponentVo> listToReturn = new ArrayList<SystemComponentVo>();
+		List<BusinessObject> components = dao.findBusinessObjectsByType(BusinessObjectTypeEnum.SYSTEM_COMPONENT);
+		if(components!=null){
+			for (BusinessObject businessObject : components) {
+				SystemComponent sysComp = (SystemComponent)businessObject;
+				listToReturn.add((SystemComponentVo)sysComp.createDTO());
+			}
+		}
+		return listToReturn;
+	}
+	
+	public void deleteSystemComponent(String uuid) throws ServiceException{
+		dao.deleteBusinessObjectByUuid(uuid);
+		dao.deleteRelationShipByChildUuid(uuid, RelationshipTypeEnum.LAB_SYSTEMCOMPONENT);
+	}
+	
 	public void setDao(DAO dao) {
 		this.dao = dao;
 	}
-	
-		
+
+			
 }
 

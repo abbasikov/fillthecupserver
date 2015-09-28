@@ -50,6 +50,19 @@ public class DAOImpl extends BaseDAOImpl implements DAO {
 	}
 	
 	@Override
+	public void deleteRelationShip(String pUuid, String cUuid, RelationshipTypeEnum relationshipType) throws ServiceException
+	{
+		DBObjectRelationshipPK pk = new DBObjectRelationshipPK(pUuid, cUuid, relationshipType.getRelationshipName());
+		this.dbObjectRelationshipRepository.delete(pk);
+	}
+	
+	@Override
+	public void deleteRelationShipByChildUuid(String cUuid, RelationshipTypeEnum relationshipType) throws ServiceException
+	{
+		this.dbObjectRelationshipRepository.deleteRelationshipByChildUuid(cUuid, relationshipType.getRelationshipName());
+	}
+	
+	@Override
 	@Transactional
 	public List<BusinessObject> getBusinessObjectByName(BusinessObjectTypeEnum type,String nameValue) throws ServiceException{
 		return super.getBusinessObjectByName(type,nameValue);

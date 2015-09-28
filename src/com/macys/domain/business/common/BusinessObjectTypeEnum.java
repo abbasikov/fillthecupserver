@@ -7,8 +7,9 @@ import com.macys.utils.AppUtils;
 
 public enum BusinessObjectTypeEnum {
 
-	USER("USER1","User1"),
-	LAB("LLAB1","LLab1");
+	USER("USER1","User"),
+	LAB("LLAB1","LLab"),
+	SYSTEM_COMPONENT("SYSCO","SystemComponent");
 
 	String type;
 	String interfaceName;

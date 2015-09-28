@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -26,5 +27,9 @@ public interface DBObjectRelationshipRepository extends CrudRepository<DBObjectR
 	
 	@Query("select u from DBObjectRelationship u where u.pk.pUuid = ?1 and u.pk.relationshipType = ?2")
 	List<DBObjectRelationship> findChildrenWithRelationshipType(String parentUuid, String relationshipType);
+	
+	@Modifying
+	@Query(name="deleteRelationshipByChildUuid", value="delete DBObjectRelationship u where u.pk.cUuid = ?1 and u.pk.relationshipType = ?2")
+	void deleteRelationshipByChildUuid(String childUuid,String relationshipType);
 	
 }
