@@ -95,7 +95,7 @@ public class ReleaseCupImpl extends BusinessObjectImpl implements ReleaseCup{
 		vo.devDays			= this.getDevDays();
 		vo.regressionDays	= this.getRegressionDays();
 		
-		return null;
+		return vo;
 	}
 	
 	
