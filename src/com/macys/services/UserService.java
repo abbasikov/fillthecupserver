@@ -307,7 +307,7 @@ public class UserService {
 		releaseCupVo.sysComponents	= systemComponents;
 		releaseCupVo.release		= (ReleaseVo)release.createDTO();
 		releaseCupVo.lab			= (LabVo)lab.createDTO();
-		releaseCupVo.matrixJson		= matrixJson;
+		releaseCupVo.matrix			= JsonUtils.fromJson(releaseCup.getMatrixJson(), MatrixVo.class);
 		
 		return releaseCupVo;
 	}
