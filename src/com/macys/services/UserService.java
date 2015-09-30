@@ -285,6 +285,12 @@ public class UserService {
 			throw new ServiceException("Invalid Lab Uuid", ErrorCodeEnum.LAB_NOT_FOUND);
 		}
 		
+		//Now make the json
+		List<SystemComponentVo> systemComponents = getSystemComponentsList(sysComponents);
+		MatrixVo matrix 	= new MatrixVo();
+		matrix.columns		= systemComponents;
+		String matrixJson 	= JsonUtils.toJson(matrix);
+		
 		ReleaseCup releaseCup = (ReleaseCup)dao.emptyBusinessObject(BusinessObjectTypeEnum.RELEASECUP, release.getName(), Constants.SYSTEM_USER);
 		releaseCup.setAvailableDevDays(availableDevDays);
 		releaseCup.setDevDays(devDays);
@@ -292,14 +298,7 @@ public class UserService {
 		releaseCup.setReleaseUuid(releaseUuid);
 		releaseCup.setLabUuid(labUuid);
 		releaseCup.setSysComponents(sysComponents);
-		
-		List<SystemComponentVo> systemComponents = getSystemComponentsList(sysComponents);
-		
-		//Now make the json
-		MatrixVo matrix = new MatrixVo();
-		matrix.columns	= systemComponents;
-		
-		
+		releaseCup.setMatrixJson(matrixJson);
 		
 		//Saving the cup
 		releaseCup = (ReleaseCup)dao.saveBusinessObject(releaseCup);
@@ -308,7 +307,7 @@ public class UserService {
 		releaseCupVo.sysComponents	= systemComponents;
 		releaseCupVo.release		= (ReleaseVo)release.createDTO();
 		releaseCupVo.lab			= (LabVo)lab.createDTO();
-		releaseCupVo.matrixJson		= JsonUtils.toJson(matrix);
+		releaseCupVo.matrixJson		= matrixJson;
 		
 		return releaseCupVo;
 	}
