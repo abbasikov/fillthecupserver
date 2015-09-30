@@ -8,7 +8,6 @@ import com.macys.domain.business.common.annotations.PersistentBusinessObject;
 import com.macys.domain.business.common.annotations.PersistentMetadata;
 import com.macys.utils.AppUtils;
 import com.macys.valuesobjects.BaseDTO;
-import com.macys.valuesobjects.MatrixVo;
 import com.macys.valuesobjects.ReleaseCupVo;
 
 @PersistentBusinessObject(type=BusinessObjectTypeEnum.RELEASECUP)

@@ -335,7 +335,7 @@ public class UserService {
 			exc.printStackTrace(System.err);
 		}
 		
-		return list;
+		return sortedList;
 	}
 
 	public List<ReleaseCupVo> getAllReleaseCupsByLabUuid(String labUuid) throws ServiceException{

@@ -6,7 +6,7 @@ import flexjson.JSON;
 
 public class MatrixVo {
 	
-	public SettingVo 				settings;
+	public SettingVo 				settings = new SettingVo();
 	public List<SystemComponentVo> 	columns;
 	public String[][]				data = {{}};	
 	
