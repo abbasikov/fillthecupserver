@@ -6,6 +6,10 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.macys.utils.JsonUtils;
+import com.macys.valuesobjects.MatrixVo;
+import com.macys.valuesobjects.SettingVo;
+
 public class Test {
 	
 	private int i;
@@ -50,6 +54,9 @@ public class Test {
 		String random = UUID.randomUUID().toString();
 		
 		System.out.println(random.substring(0,8));
+		MatrixVo mat = new MatrixVo();
+		mat.settings = new SettingVo();
+		System.out.println(JsonUtils.toJson(mat));
 	}
 
 	@Override
