@@ -28,4 +28,8 @@ public interface ReleaseCup extends BusinessObject{
 
 	public abstract String getSysComponents();
 
+	public abstract void setMatrixJson(String matrixJson);
+
+	public abstract String getMatrixJson();
+
 }

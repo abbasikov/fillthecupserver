@@ -19,8 +19,10 @@ import com.macys.exceptions.ErrorCodeEnum;
 import com.macys.exceptions.ServiceException;
 import com.macys.utils.Constants;
 import com.macys.utils.EncryptionUtils;
+import com.macys.utils.JsonUtils;
 import com.macys.utils.ServiceUtils;
 import com.macys.valuesobjects.LabVo;
+import com.macys.valuesobjects.MatrixVo;
 import com.macys.valuesobjects.ReleaseCupVo;
 import com.macys.valuesobjects.ReleaseVo;
 import com.macys.valuesobjects.SystemComponentVo;
@@ -291,26 +293,44 @@ public class UserService {
 		releaseCup.setLabUuid(labUuid);
 		releaseCup.setSysComponents(sysComponents);
 		
+		List<SystemComponentVo> systemComponents = getSystemComponentsList(sysComponents);
+		
+		//Now make the json
+		MatrixVo matrix = new MatrixVo();
+		matrix.columns	= systemComponents;
+		
+		
 		
 		//Saving the cup
 		releaseCup = (ReleaseCup)dao.saveBusinessObject(releaseCup);
 		
 		ReleaseCupVo releaseCupVo 	= (ReleaseCupVo)releaseCup.createDTO();
-		releaseCupVo.sysComponents	= getSystemComponentsList(sysComponents);
+		releaseCupVo.sysComponents	= systemComponents;
 		releaseCupVo.release		= (ReleaseVo)release.createDTO();
 		releaseCupVo.lab			= (LabVo)lab.createDTO();
+		releaseCupVo.matrixJson		= JsonUtils.toJson(matrix);
 		
 		return releaseCupVo;
 	}
 	
 	private List<SystemComponentVo> getSystemComponentsList(String sysComponents) {
 		List<SystemComponentVo> list = new ArrayList<SystemComponentVo>();
+		List<SystemComponentVo> sortedList = new ArrayList<SystemComponentVo>();
 		try{
 			String[] uuids = sysComponents.split(";");
 			for (String uuid : uuids) {
 				SystemComponent sysComp = (SystemComponent)dao.getBusinessObjectByUuid(uuid);
 				list.add((SystemComponentVo)sysComp.createDTO());
 			}
+			
+			for (int i=0;i<list.size();i++) {
+				if(list.get(i).name.equals("MVPs")){
+					sortedList.add(list.remove(i));
+					break;
+				}
+			}
+			
+			sortedList.addAll(list);
 		}
 		catch(Exception exc){
 			exc.printStackTrace(System.err);

@@ -15,4 +15,6 @@ public class ReleaseCupVo extends BaseDTO {
 	public String regressionDays;
 	
 	public List<SystemComponentVo> sysComponents;
+	
+	public String matrixJson;
 }

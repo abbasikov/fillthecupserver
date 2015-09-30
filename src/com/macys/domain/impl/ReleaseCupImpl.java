@@ -8,6 +8,7 @@ import com.macys.domain.business.common.annotations.PersistentBusinessObject;
 import com.macys.domain.business.common.annotations.PersistentMetadata;
 import com.macys.utils.AppUtils;
 import com.macys.valuesobjects.BaseDTO;
+import com.macys.valuesobjects.MatrixVo;
 import com.macys.valuesobjects.ReleaseCupVo;
 
 @PersistentBusinessObject(type=BusinessObjectTypeEnum.RELEASECUP)
@@ -35,6 +36,9 @@ public class ReleaseCupImpl extends BusinessObjectImpl implements ReleaseCup{
 	
 	@PersistentMetadata
 	private String sysComponents;
+	
+	@PersistentMetadata
+	private String matrixJson;
 	
 	@Override
 	public String getReleaseUuid() {
@@ -94,6 +98,16 @@ public class ReleaseCupImpl extends BusinessObjectImpl implements ReleaseCup{
 	@Override
 	public void setSysComponents(String sysComponents) {
 		this.sysComponents = sysComponents;
+	}
+	
+	@Override
+	public String getMatrixJson() {
+		return matrixJson;
+	}
+
+	@Override
+	public void setMatrixJson(String matrixJson) {
+		this.matrixJson = matrixJson;
 	}
 
 	@Override
