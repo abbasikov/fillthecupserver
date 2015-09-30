@@ -397,11 +397,12 @@ public class PublicRestController extends BaseRestController{
 											@ApiParam(value="labUuid",required=true) 			@FormParam("labUuid") 			String labUuid,
 											@ApiParam(value="availableDevDays",required=true) 	@FormParam("availableDevDays") 	String availableDevDays,
 											@ApiParam(value="devDays",required=true)			@FormParam("devDays")	 		String devDays,
-											@ApiParam(value="regressionDays",required=true) 	@FormParam("regressionDays")	String regressionDays){
+											@ApiParam(value="regressionDays",required=true) 	@FormParam("regressionDays")	String regressionDays,
+											@ApiParam(value="sysComponents",required=true) 		@FormParam("sysComponents")		String sysComponents){
  
 		ReleaseCupContainerVo container = new ReleaseCupContainerVo();
 		try{
-			ReleaseCupVo vo 		=  userService.createReleaseCup(releaseUuid,labUuid,availableDevDays,devDays,regressionDays);
+			ReleaseCupVo vo 		=  userService.createReleaseCup(releaseUuid,labUuid,availableDevDays,devDays,regressionDays,sysComponents);
 			container.meta.code 	= Constants.SUCCESS;
 			container.data			= vo;
 			return container;

@@ -264,13 +264,14 @@ public class UserService {
 		return listToReturn;
 	}
 
-	public ReleaseCupVo createReleaseCup(String releaseUuid, String labUuid, String availableDevDays, String devDays, String regressionDays) throws ServiceException {
+	public ReleaseCupVo createReleaseCup(String releaseUuid, String labUuid, String availableDevDays, String devDays, String regressionDays,String sysComponents) throws ServiceException {
 		
 		ServiceUtils.verifyNotBlank(releaseUuid, 		"releaseUuid");
 		ServiceUtils.verifyNotBlank(labUuid, 			"labUuid");
 		ServiceUtils.verifyNotBlank(availableDevDays, 	"availableDevDays");
 		ServiceUtils.verifyNotBlank(devDays, 			"devDays");
 		ServiceUtils.verifyNotBlank(regressionDays, 	"regressionDays");
+		ServiceUtils.verifyNotBlank(sysComponents, 		"sysComponents");
 		
 		Release release = (Release)dao.getBusinessObjectByUuid(releaseUuid);
 		if(release == null){
@@ -288,18 +289,36 @@ public class UserService {
 		releaseCup.setRegressionDays(regressionDays);
 		releaseCup.setReleaseUuid(releaseUuid);
 		releaseCup.setLabUuid(labUuid);
+		releaseCup.setSysComponents(sysComponents);
 		
 		
 		//Saving the cup
 		releaseCup = (ReleaseCup)dao.saveBusinessObject(releaseCup);
 		
 		ReleaseCupVo releaseCupVo 	= (ReleaseCupVo)releaseCup.createDTO();
+		releaseCupVo.sysComponents	= getSystemComponentsList(sysComponents);
 		releaseCupVo.release		= (ReleaseVo)release.createDTO();
 		releaseCupVo.lab			= (LabVo)lab.createDTO();
 		
 		return releaseCupVo;
 	}
 	
+	private List<SystemComponentVo> getSystemComponentsList(String sysComponents) {
+		List<SystemComponentVo> list = new ArrayList<SystemComponentVo>();
+		try{
+			String[] uuids = sysComponents.split(";");
+			for (String uuid : uuids) {
+				SystemComponent sysComp = (SystemComponent)dao.getBusinessObjectByUuid(uuid);
+				list.add((SystemComponentVo)sysComp.createDTO());
+			}
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+		}
+		
+		return list;
+	}
+
 	public List<ReleaseCupVo> getAllReleaseCupsByLabUuid(String labUuid) throws ServiceException{
 		
 		ServiceUtils.verifyNotBlank(labUuid, 		"labUuid");
@@ -322,6 +341,7 @@ public class UserService {
 				
 				releaseCupVo.release		= releaseVo;
 				releaseCupVo.lab			= (LabVo)lab.createDTO();
+				releaseCupVo.sysComponents	= getSystemComponentsList(releaseCup.getSysComponents());
 				
 				listToReturn.add(releaseCupVo);
 			}

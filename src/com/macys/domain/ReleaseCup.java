@@ -24,4 +24,8 @@ public interface ReleaseCup extends BusinessObject{
 
 	public abstract String getReleaseUuid();
 
+	public abstract void setSysComponents(String sysComponents);
+
+	public abstract String getSysComponents();
+
 }

@@ -33,6 +33,9 @@ public class ReleaseCupImpl extends BusinessObjectImpl implements ReleaseCup{
 	@PersistentMetadata
 	private String regressionDays;
 	
+	@PersistentMetadata
+	private String sysComponents;
+	
 	@Override
 	public String getReleaseUuid() {
 		return releaseUuid;
@@ -83,6 +86,16 @@ public class ReleaseCupImpl extends BusinessObjectImpl implements ReleaseCup{
 		this.regressionDays = regressionDays;
 	}
 	
+	@Override
+	public String getSysComponents() {
+		return sysComponents;
+	}
+
+	@Override
+	public void setSysComponents(String sysComponents) {
+		this.sysComponents = sysComponents;
+	}
+
 	@Override
 	public BaseDTO createDTO() {
 		ReleaseCupVo vo 	= new ReleaseCupVo();
