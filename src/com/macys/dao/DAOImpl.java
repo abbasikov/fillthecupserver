@@ -50,6 +50,7 @@ public class DAOImpl extends BaseDAOImpl implements DAO {
 	}
 	
 	@Override
+	@Transactional
 	public void deleteRelationShip(String pUuid, String cUuid, RelationshipTypeEnum relationshipType) throws ServiceException
 	{
 		DBObjectRelationshipPK pk = new DBObjectRelationshipPK(pUuid, cUuid, relationshipType.getRelationshipName());
@@ -57,6 +58,7 @@ public class DAOImpl extends BaseDAOImpl implements DAO {
 	}
 	
 	@Override
+	@Transactional
 	public void deleteRelationShipByChildUuid(String cUuid, RelationshipTypeEnum relationshipType) throws ServiceException
 	{
 		this.dbObjectRelationshipRepository.deleteRelationshipByChildUuid(cUuid, relationshipType.getRelationshipName());

@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 
 import com.macys.exceptions.ErrorCodeEnum;
 import com.macys.exceptions.ServiceException;
+import com.macys.services.LabService;
 import com.macys.services.UserService;
 import com.macys.utils.Constants;
 import com.macys.valuesobjects.LabVo;
@@ -43,6 +44,8 @@ public class PublicRestController extends BaseRestController{
 	protected final Logger log = Logger.getLogger(PublicRestController.class);
 	
 	private UserService userService;
+	
+	private LabService	labService;
 	
 	@Context
 	private HttpHeaders httpHeaders;
@@ -136,7 +139,7 @@ public class PublicRestController extends BaseRestController{
 		LabContainerVo labContainer = new LabContainerVo();
 		
 		try{
-			List<LabVo> labs 				= userService.getAllLabs();
+			List<LabVo> labs 				= labService.getAllLabs();
 			labContainer.meta.code 			= Constants.SUCCESS;
 			labContainer.dataList 			= labs;
 			return labContainer;
@@ -165,7 +168,7 @@ public class PublicRestController extends BaseRestController{
  
 		BaseContainerVo baseContainer = new BaseContainerVo();
 		try{
-			userService.deleteLab(uuid);
+			labService.deleteLab(uuid);
 			baseContainer.meta.code = Constants.SUCCESS;
 			return baseContainer;
 		}
@@ -193,7 +196,7 @@ public class PublicRestController extends BaseRestController{
  
 		BaseContainerVo baseContainer = new BaseContainerVo();
 		try{
-			userService.deleteBusinessObject(uuid);
+			labService.deleteBusinessObject(uuid);
 			baseContainer.meta.code = Constants.SUCCESS;
 			return baseContainer;
 		}
@@ -218,10 +221,11 @@ public class PublicRestController extends BaseRestController{
 	@Produces( MediaType.APPLICATION_JSON )
 	public BaseContainerVo objectService(	@FormParam("uuid")		String uuid,
 											@FormParam("names") 	String names, 
-											@FormParam("values") 	String values) {
+											@FormParam("values") 	String values,
+											@FormParam("delimiter") 	String delimiter) {
 		BaseContainerVo baseContainer = new BaseContainerVo();
 		try{
-			userService.updateBusinessObject(uuid,names,values);
+			userService.updateBusinessObject(uuid,names,values,delimiter);
 			baseContainer.meta.code = Constants.SUCCESS;
 			return baseContainer;
 		}
@@ -248,7 +252,7 @@ public class PublicRestController extends BaseRestController{
 	public BaseContainerVo createSystemComponents(@ApiParam(value="name",required=true) @FormParam("name") String name){
 		SystemComponentContainerVo container = new SystemComponentContainerVo();
 		try{
-			SystemComponentVo vo 	= userService.createSystemComponent(name);
+			SystemComponentVo vo 	= labService.createSystemComponent(name);
 			container.meta.code 	= Constants.SUCCESS;
 			container.data 			= vo;
 			return container;
@@ -276,7 +280,7 @@ public class PublicRestController extends BaseRestController{
 	public BaseContainerVo getAllSystemComponents(){
 		SystemComponentContainerVo container = new SystemComponentContainerVo();
 		try{
-			List<SystemComponentVo> voList 	= userService.getAllSystemComponents();
+			List<SystemComponentVo> voList 	= labService.getAllSystemComponents();
 			container.meta.code 			= Constants.SUCCESS;
 			container.dataList 				= voList;
 			return container;
@@ -305,7 +309,7 @@ public class PublicRestController extends BaseRestController{
  
 		BaseContainerVo baseContainer = new BaseContainerVo();
 		try{
-			userService.deleteSystemComponent(uuid);
+			labService.deleteSystemComponent(uuid);
 			baseContainer.meta.code = Constants.SUCCESS;
 			return baseContainer;
 		}
@@ -337,7 +341,7 @@ public class PublicRestController extends BaseRestController{
  
 		ReleaseContainerVo container = new ReleaseContainerVo();
 		try{
-			ReleaseVo vo 		=  userService.createRelease(name,branchCutDate,hardLockDate,mcomDate,bcomDate);
+			ReleaseVo vo 		=  labService.createRelease(name,branchCutDate,hardLockDate,mcomDate,bcomDate);
 			container.meta.code = Constants.SUCCESS;
 			container.data		= vo;
 			return container;
@@ -367,7 +371,7 @@ public class PublicRestController extends BaseRestController{
  
 		ReleaseContainerVo container = new ReleaseContainerVo();
 		try{
-			List<ReleaseVo> list 	= userService.getAllReleases();
+			List<ReleaseVo> list 	= labService.getAllReleases();
 			container.meta.code 	= Constants.SUCCESS;
 			container.dataList		= list;
 			return container;
@@ -402,7 +406,7 @@ public class PublicRestController extends BaseRestController{
  
 		ReleaseCupContainerVo container = new ReleaseCupContainerVo();
 		try{
-			ReleaseCupVo vo 		=  userService.createReleaseCup(releaseUuid,labUuid,availableDevDays,devDays,regressionDays,sysComponents);
+			ReleaseCupVo vo 		=  labService.createReleaseCup(releaseUuid,labUuid,availableDevDays,devDays,regressionDays,sysComponents);
 			container.meta.code 	= Constants.SUCCESS;
 			container.data			= vo;
 			return container;
@@ -431,7 +435,7 @@ public class PublicRestController extends BaseRestController{
  
 		ReleaseCupContainerVo container = new ReleaseCupContainerVo();
 		try{
-			List<ReleaseCupVo> voList 	=  userService.getAllReleaseCupsByLabUuid(labUuid);
+			List<ReleaseCupVo> voList 	=  labService.getAllReleaseCupsByLabUuid(labUuid);
 			container.meta.code 		= Constants.SUCCESS;
 			container.dataList			= voList;
 			return container;
@@ -455,5 +459,10 @@ public class PublicRestController extends BaseRestController{
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
+	
+	public void setLabService(LabService labService) {
+		this.labService = labService;
+	}
+	
 	
 }

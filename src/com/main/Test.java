@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.macys.utils.JsonUtils;
 import com.macys.valuesobjects.MatrixVo;
-import com.macys.valuesobjects.SettingVo;
 
 public class Test {
 	
@@ -55,7 +54,7 @@ public class Test {
 		
 		System.out.println(random.substring(0,8));
 		MatrixVo mat = new MatrixVo();
-		mat.settings = new SettingVo();
+		//mat.settings = new SettingVo();
 		System.out.println(JsonUtils.toJson(mat));
 	}
 

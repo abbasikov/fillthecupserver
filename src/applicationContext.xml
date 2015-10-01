@@ -62,10 +62,16 @@
 		<property name="jdbcTemplateRepostiory" ref="jdbcTemplateRepostioryBean"></property>
 	</bean>
 	
-	
-	<bean id="userServiceBean"	class="com.macys.services.UserService">
+	<bean id="labServiceBean"	class="com.macys.services.LabService">
 		<property name="dao" ref="daoBean"></property>		
 	</bean>
+	
+	<bean id="userServiceBean"	class="com.macys.services.UserService">
+		<property name="dao" 		ref="daoBean"></property>	
+		<property name="labService" ref="labServiceBean"></property>		
+	</bean>
+	
+	
 	
 	 
 	<bean id="userAuthenticatorBean" 	class="com.macys.rest.filters.UserAuthenticator">
@@ -75,6 +81,7 @@
 	<!-- REST SERVICE THAT WILL ACCEPT ALL PUBLIC REST CALLS -->
 	<bean id="publicRestController" class="com.macys.rest.PublicRestController">
 		<property name="userService" 	ref="userServiceBean"></property>
+		<property name="labService" 	ref="labServiceBean"></property>
 	</bean>
 	
 	<!-- JSON PROVIDER BEAN -->
@@ -124,8 +131,7 @@
 	<bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
 		<property name="resourcePackage" 	value="com.macys.rest" />
 		<property name="version" 			value="1.0" />
-		<!-- <property name="basePath" 			value="http://localhost:9090/fillthecup" /> -->
-		<property name="basePath" 			value="https://jbossews-abbasikov.rhcloud.com/fillthecupserver" />
+		<property name="basePath" 			value="${swagger.base.path}" />
 		<property name="title" 				value="Swagger UI FillTheCup" />
 		<property name="description" 		value="FillTheCupServer Project REST API Documentation." />
 		<property name="contact" 			value="umair.abbasi@macys.com" />
