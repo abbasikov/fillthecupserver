@@ -66,7 +66,12 @@ public class UserService {
 			
 			//Get All Release Cups for Each lab of the user.
 			for (LabVo labvo : userVo.labs) {
+				try{
 				labvo.releaseCups = getAllReleaseCupsByLabUuid(labvo.uuid);
+				}
+				catch(Exception exc){
+					
+				}
 			}
 			
 			return userVo;
