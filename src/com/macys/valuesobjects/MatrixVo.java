@@ -18,6 +18,7 @@ public class MatrixVo {
 		}
 		
 		this.columns.add(new SystemComponentVo(AppUtils.randomUuid(), "MVPs", BusinessObjectTypeEnum.SYSTEM_COMPONENT.toString()));
+		this.columns.add(new SystemComponentVo(AppUtils.randomUuid(), "IPM", BusinessObjectTypeEnum.SYSTEM_COMPONENT.toString()));
 	}
 	
 	private List<SystemComponentVo> 	columns;
