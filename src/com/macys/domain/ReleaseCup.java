@@ -32,4 +32,8 @@ public interface ReleaseCup extends BusinessObject{
 
 	public abstract String getMatrixJson();
 
+	public abstract void setLastClicked(String lastClicked);
+
+	public abstract String getLastClicked();
+
 }

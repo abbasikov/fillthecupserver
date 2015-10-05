@@ -39,6 +39,9 @@ public class ReleaseCupImpl extends BusinessObjectImpl implements ReleaseCup{
 	@PersistentMetadata
 	private String matrixJson;
 	
+	@PersistentMetadata
+	private String lastClicked;
+	
 	@Override
 	public String getReleaseUuid() {
 		return releaseUuid;
@@ -108,6 +111,16 @@ public class ReleaseCupImpl extends BusinessObjectImpl implements ReleaseCup{
 	public void setMatrixJson(String matrixJson) {
 		this.matrixJson = matrixJson;
 	}
+	
+	@Override
+	public String getLastClicked() {
+		return lastClicked;
+	}
+
+	@Override
+	public void setLastClicked(String lastClicked) {
+		this.lastClicked = lastClicked;
+	}
 
 	@Override
 	public BaseDTO createDTO() {
@@ -120,7 +133,7 @@ public class ReleaseCupImpl extends BusinessObjectImpl implements ReleaseCup{
 		vo.availableDevDays = this.getAvailableDevDays();
 		vo.devDays			= this.getDevDays();
 		vo.regressionDays	= this.getRegressionDays();
-		
+		vo.lastClicked		= this.getLastClicked();
 		return vo;
 	}
 	

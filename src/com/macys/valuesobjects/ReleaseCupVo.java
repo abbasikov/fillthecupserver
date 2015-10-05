@@ -17,4 +17,6 @@ public class ReleaseCupVo extends BaseDTO {
 	public List<SystemComponentVo> sysComponents;
 	
 	public String matrix;
+	
+	public String lastClicked;
 }
