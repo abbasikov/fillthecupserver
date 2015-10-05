@@ -16,5 +16,5 @@ public class ReleaseCupVo extends BaseDTO {
 	
 	public List<SystemComponentVo> sysComponents;
 	
-	public MatrixVo matrix;
+	public String matrix;
 }

@@ -19,17 +19,30 @@ public class SystemComponentImpl extends BusinessObjectImpl implements SystemCom
 	
 	@PersistentMetadata
 	private String description;
+	
+	@PersistentMetadata
+	private String displayName;
 
 	@Override
 	public String getDescription() {
 		return description;
 	}
-
+	
 	@Override
 	public void setDescription(String description) {
 		this.description = description;
 	}
 	
+	@Override
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	@Override
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
 	@Override
 	public BaseDTO createDTO() {
 		SystemComponentVo vo = new SystemComponentVo();
@@ -39,6 +52,7 @@ public class SystemComponentImpl extends BusinessObjectImpl implements SystemCom
 		vo.createdOnISO8601	= AppUtils.getDateISO8601(this.getCreatedOn());
 		
 		vo.description 	= this.getDescription();
+		vo.displayName	= this.getName();
 		
 		return vo;
 	}

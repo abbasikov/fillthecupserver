@@ -8,4 +8,8 @@ public interface SystemComponent extends BusinessObject{
 
 	public abstract String getDescription();
 
+	public abstract void setDisplayName(String displayName);
+
+	public abstract String getDisplayName();
+
 }

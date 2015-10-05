@@ -19,9 +19,16 @@ public class JsonUtils {
 	}
 	
 	public static <T> T fromJson(String jsonString, Class<T> clazz) {
-        Gson gson = new Gson();
-        T object = gson.fromJson(jsonString, clazz);
-        return object;
+		try{
+			Gson gson = new Gson();
+	        T object = gson.fromJson(jsonString, clazz);
+	        return object;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			return null;
+		}
+        
     }
 	
 }

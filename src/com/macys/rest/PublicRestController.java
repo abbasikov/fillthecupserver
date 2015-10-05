@@ -60,45 +60,6 @@ public class PublicRestController extends BaseRestController{
     private transient HttpServletRequest servletRequest;
 	
 	@POST
-	@Path("/labs")
-	@Produces( MediaType.APPLICATION_JSON )
-	@ApiOperation(value = "Register Lab",response=LabContainerVo.class)
-	public BaseContainerVo createLab(
-			@ApiParam(value="Lab Name",		required=true) 	@FormParam("labName") 			String labName, 
-			@ApiParam(value="Manager Name",	required=true)	@FormParam("managerName") 		String managerName, 
-			@ApiParam(value="PDM Name",		required=true)	@FormParam("pdmName") 			String pdmName, 
-			@ApiParam(value="UserName",		required=true)	@FormParam("userName") 			String userName,
-			@ApiParam(value="Password",		required=true)	@FormParam("password") 			String password,
-			@ApiParam(value="IsSuperAdmin",	required=true)	@FormParam("isSuperAdmin") 		String isSuperAdmin
-									) {
-		
-		LabContainerVo labContainer = new LabContainerVo();
-		 
-		try{
-			
-			LabVo labVo 				= userService.createLabAndUser(labName,managerName,pdmName,userName,password,isSuperAdmin);
-			labContainer.meta.code 	= Constants.SUCCESS;
-			labContainer.data 			= labVo;
-			return labContainer;
-		}
-		catch(ServiceException exc){
-			exc.printStackTrace(System.err);
-			labContainer.meta.code 	= exc.getErrorCodeEnum().getCode();
-			labContainer.meta.error 	= exc.getErrorCodeEnum().getMessage();
-			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return labContainer;
-		}
-		catch(Exception exc){
-			exc.printStackTrace(System.err);
-			labContainer.meta.code 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
-			labContainer.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
-			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return labContainer;
-		}
-	}
-	
-	
-	@POST
 	@Path("/login")
 	@Produces( MediaType.APPLICATION_JSON )
 	@ApiOperation(value = "Login",response=UserContainerVo.class)
@@ -130,63 +91,7 @@ public class PublicRestController extends BaseRestController{
 		}
 	}
 	
-	@GET
-	@Path("/labs")
-	@Produces( MediaType.APPLICATION_JSON )
-	@ApiOperation(value = "Get All Labs",response=LabContainerVo.class)
-	public BaseContainerVo getLabs(){
-
-		LabContainerVo labContainer = new LabContainerVo();
-		
-		try{
-			List<LabVo> labs 				= labService.getAllLabs();
-			labContainer.meta.code 			= Constants.SUCCESS;
-			labContainer.dataList 			= labs;
-			return labContainer;
-		}
-		catch(ServiceException exc){
-			exc.printStackTrace(System.err);
-			labContainer.meta.code 		= exc.getErrorCodeEnum().getCode();
-			labContainer.meta.error 	= exc.getErrorCodeEnum().getMessage();
-			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return labContainer;
-		}
-		catch(Exception exc){
-			exc.printStackTrace(System.err);
-			labContainer.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
-			labContainer.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
-			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return labContainer;
-		}
-	}
 	
-	@POST
-	@Path("/deletelab")
-	@Produces( MediaType.APPLICATION_JSON )
-	@ApiOperation(value = "Delete Lab",response=BaseContainerVo.class)
-	public BaseContainerVo deleteLab(@ApiParam(value="uuid",required=true) @FormParam("uuid") String uuid){
- 
-		BaseContainerVo baseContainer = new BaseContainerVo();
-		try{
-			labService.deleteLab(uuid);
-			baseContainer.meta.code = Constants.SUCCESS;
-			return baseContainer;
-		}
-		catch(ServiceException exc){
-			exc.printStackTrace(System.err);
-			baseContainer.meta.code 		= exc.getErrorCodeEnum().getCode();
-			baseContainer.meta.error 		= exc.getErrorCodeEnum().getMessage();
-			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return baseContainer;
-		}
-		catch(Exception exc){
-			exc.printStackTrace(System.err);
-			baseContainer.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
-			baseContainer.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
-			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return baseContainer;
-		}
-	}
 	
 	@POST
 	@Path("/deletebusinessobject")
@@ -428,7 +333,36 @@ public class PublicRestController extends BaseRestController{
 	}
 	
 	@GET
-	@Path("/releasecups/{labUuid}")
+	@Path("/releasecups/{releaseCupUuid}")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Create Release Cup",response=ReleaseCupContainerVo.class)
+	public BaseContainerVo getReleaseCup(@ApiParam(value="releaseCupUuid",required=true) @PathParam("releaseCupUuid") String releaseCupUuid){
+ 
+		ReleaseCupContainerVo container = new ReleaseCupContainerVo();
+		try{
+			ReleaseCupVo vo 		=  labService.getReleaseCupByUuid(releaseCupUuid);
+			container.meta.code 	= Constants.SUCCESS;
+			container.data			= vo;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= exc.getErrorCodeEnum().getCode();
+			container.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+	}
+	
+	@GET
+	@Path("/labs/{labUuid}/releasecups")
 	@Produces( MediaType.APPLICATION_JSON )
 	@ApiOperation(value = "Get All Release Cups By Lab Uuid",response=ReleaseCupContainerVo.class)
 	public BaseContainerVo getAllReleaseCupsByLabUuid(@ApiParam(value="labUuid",required=true) @PathParam("labUuid") String labUuid){
@@ -453,6 +387,102 @@ public class PublicRestController extends BaseRestController{
 			container.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
 			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
 			return container;
+		}
+	}
+	
+	@POST
+	@Path("/labs")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Register Lab",response=LabContainerVo.class)
+	public BaseContainerVo createLab(
+			@ApiParam(value="Lab Name",		required=true) 	@FormParam("labName") 			String labName, 
+			@ApiParam(value="Manager Name",	required=true)	@FormParam("managerName") 		String managerName, 
+			@ApiParam(value="PDM Name",		required=true)	@FormParam("pdmName") 			String pdmName, 
+			@ApiParam(value="UserName",		required=true)	@FormParam("userName") 			String userName,
+			@ApiParam(value="Password",		required=true)	@FormParam("password") 			String password,
+			@ApiParam(value="IsSuperAdmin",	required=true)	@FormParam("isSuperAdmin") 		String isSuperAdmin
+									) {
+		
+		LabContainerVo labContainer = new LabContainerVo();
+		 
+		try{
+			
+			LabVo labVo 				= userService.createLabAndUser(labName,managerName,pdmName,userName,password,isSuperAdmin);
+			labContainer.meta.code 	= Constants.SUCCESS;
+			labContainer.data 			= labVo;
+			return labContainer;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			labContainer.meta.code 	= exc.getErrorCodeEnum().getCode();
+			labContainer.meta.error 	= exc.getErrorCodeEnum().getMessage();
+			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return labContainer;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			labContainer.meta.code 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			labContainer.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return labContainer;
+		}
+	}
+	
+	@GET
+	@Path("/labs")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Get All Labs",response=LabContainerVo.class)
+	public BaseContainerVo getLabs(){
+
+		LabContainerVo labContainer = new LabContainerVo();
+		
+		try{
+			List<LabVo> labs 				= labService.getAllLabs();
+			labContainer.meta.code 			= Constants.SUCCESS;
+			labContainer.dataList 			= labs;
+			return labContainer;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			labContainer.meta.code 		= exc.getErrorCodeEnum().getCode();
+			labContainer.meta.error 	= exc.getErrorCodeEnum().getMessage();
+			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return labContainer;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			labContainer.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			labContainer.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return labContainer;
+		}
+	}
+	
+	@POST
+	@Path("/deletelab")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Delete Lab",response=BaseContainerVo.class)
+	public BaseContainerVo deleteLab(@ApiParam(value="uuid",required=true) @FormParam("uuid") String uuid){
+ 
+		BaseContainerVo baseContainer = new BaseContainerVo();
+		try{
+			labService.deleteLab(uuid);
+			baseContainer.meta.code = Constants.SUCCESS;
+			return baseContainer;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			baseContainer.meta.code 		= exc.getErrorCodeEnum().getCode();
+			baseContainer.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return baseContainer;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			baseContainer.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			baseContainer.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return baseContainer;
 		}
 	}
 	

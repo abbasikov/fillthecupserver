@@ -15,7 +15,7 @@ public class BaseService {
 			ServiceUtils.verifyNotBlank(uuid, 		"uuid");
 			ServiceUtils.verifyNotBlank(names, 		"names");
 			ServiceUtils.verifyNotBlank(values, 	"values");
-			ServiceUtils.verifyNotBlank(delimiter, 	"delimiter");
+			
 			
 			String[] namesArray = names.split(delimiter);
 			String[] valuesArray= values.split(delimiter);

@@ -2,6 +2,7 @@ package com.macys.services;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.macys.domain.Lab;
 import com.macys.domain.Release;
 import com.macys.domain.ReleaseCup;
@@ -37,6 +38,23 @@ public class LabService extends BaseService{
 		lab.setLocation("");
 		
 		lab = (Lab)dao.saveBusinessObject(lab);
+		
+		return (LabVo)lab.createDTO();
+		
+	}
+	
+	public LabVo getLab(String labUuid, boolean throwExpNotFound)throws ServiceException {
+		
+		ServiceUtils.verifyNotBlank(labUuid, 			"labUuid");
+		
+		Lab lab = (Lab)dao.getBusinessObjectByUuid(labUuid);
+		
+		if(lab == null){
+			if(throwExpNotFound){
+				throw new ServiceException("Invalid Lab Uuid", ErrorCodeEnum.LAB_NOT_FOUND);
+			}
+			return null;
+		}
 		
 		return (LabVo)lab.createDTO();
 		
@@ -161,6 +179,22 @@ public class LabService extends BaseService{
 		
 	}
 	
+	public ReleaseVo getRelease(String releaseUuid, boolean throwExpNotFound) throws ServiceException {
+		ServiceUtils.verifyNotBlank(releaseUuid, 			"releaseUuid");
+		
+		Release release = (Release)dao.getBusinessObjectByUuid(releaseUuid);
+		
+		if(release == null){
+			if(throwExpNotFound){
+				throw new ServiceException("Invalid Release Uuid", ErrorCodeEnum.RELEASE_NOT_FOUND);
+			}
+			return null;
+		}
+		
+		return (ReleaseVo)release.createDTO();
+		
+	}
+	
 	public List<ReleaseVo> getAllReleases() throws ServiceException {
 		// TODO Auto-generated method stub
 		List<ReleaseVo> listToReturn = new ArrayList<ReleaseVo>();
@@ -198,8 +232,7 @@ public class LabService extends BaseService{
 		//Now make the json
 		List<SystemComponentVo> systemComponents = getSystemComponentsListByDelimiter(sysComponents, ";");
 		MatrixVo matrix 	= new MatrixVo();
-		matrix.columns		= systemComponents;
-		String matrixJson 	= JsonUtils.toJson(matrix);
+		matrix.updateColums(systemComponents);
 		
 		ReleaseCup releaseCup = (ReleaseCup)dao.emptyBusinessObject(BusinessObjectTypeEnum.RELEASECUP, release.getName(), Constants.SYSTEM_USER);
 		releaseCup.setAvailableDevDays(availableDevDays);
@@ -208,7 +241,7 @@ public class LabService extends BaseService{
 		releaseCup.setReleaseUuid(releaseUuid);
 		releaseCup.setLabUuid(labUuid);
 		releaseCup.setSysComponents(sysComponents);
-		releaseCup.setMatrixJson(matrixJson);
+		releaseCup.setMatrixJson(JsonUtils.toJson(matrix));
 		
 		//Saving the cup
 		releaseCup = (ReleaseCup)dao.saveBusinessObject(releaseCup);
@@ -217,7 +250,24 @@ public class LabService extends BaseService{
 		releaseCupVo.sysComponents	= systemComponents;
 		releaseCupVo.release		= (ReleaseVo)release.createDTO();
 		releaseCupVo.lab			= (LabVo)lab.createDTO();
-		releaseCupVo.matrix			= JsonUtils.fromJson(releaseCup.getMatrixJson(), MatrixVo.class);
+		releaseCupVo.matrix			= releaseCup.getMatrixJson();
+		
+		return releaseCupVo;
+	}
+	
+	public ReleaseCupVo getReleaseCupByUuid(String releaseCupUuid) throws ServiceException {
+		ServiceUtils.verifyNotBlank(releaseCupUuid, 		"releaseCupUuid");
+		
+		ReleaseCup releaseCup = (ReleaseCup) dao.getBusinessObjectByUuid(releaseCupUuid);
+		if(releaseCup == null){
+			throw new ServiceException("Invalid Release Cup Uuid", ErrorCodeEnum.RELEASE_CUP_NOT_FOUND);
+		}
+		
+		ReleaseCupVo releaseCupVo 	= (ReleaseCupVo)releaseCup.createDTO();
+		releaseCupVo.sysComponents	=  getSystemComponentsListByDelimiter(releaseCup.getSysComponents() , ";");
+		releaseCupVo.release		= getRelease(releaseCup.getReleaseUuid(), false);
+		releaseCupVo.lab			= getLab(releaseCup.getLabUuid(), false);
+		releaseCupVo.matrix			= releaseCup.getMatrixJson();
 		
 		return releaseCupVo;
 	}
@@ -246,7 +296,7 @@ public class LabService extends BaseService{
 				releaseCupVo.release		= releaseVo;
 				releaseCupVo.lab			= (LabVo)lab.createDTO();
 				releaseCupVo.sysComponents	= getSystemComponentsListByDelimiter(releaseCup.getSysComponents(), ";");
-				releaseCupVo.matrix			= JsonUtils.fromJson(releaseCup.getMatrixJson(), MatrixVo.class);
+				releaseCupVo.matrix			= releaseCup.getMatrixJson();
 				
 				listToReturn.add(releaseCupVo);
 			}
@@ -254,6 +304,8 @@ public class LabService extends BaseService{
 	
 		return listToReturn;
 	}
+
+	
 	
 	
 }
