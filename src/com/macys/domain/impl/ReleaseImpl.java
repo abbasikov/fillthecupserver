@@ -25,6 +25,12 @@ public class ReleaseImpl extends BusinessObjectImpl implements Release{
 	private String branchHardLockDate;
 	
 	@PersistentMetadata
+	private String branchFreezeDate;
+	
+	@PersistentMetadata
+	private String branchProductionDate;
+	
+	@PersistentMetadata
 	private String mcomDate;
 	
 	@PersistentMetadata
@@ -71,6 +77,26 @@ public class ReleaseImpl extends BusinessObjectImpl implements Release{
 	}
 	
 	@Override
+	public String getBranchFreezeDate() {
+		return branchFreezeDate;
+	}
+
+	@Override
+	public void setBranchFreezeDate(String branchFreezeDate) {
+		this.branchFreezeDate = branchFreezeDate;
+	}
+
+	@Override
+	public String getBranchProductionDate() {
+		return branchProductionDate;
+	}
+
+	@Override
+	public void setBranchProductionDate(String branchProductionDate) {
+		this.branchProductionDate = branchProductionDate;
+	}
+
+	@Override
 	public BaseDTO createDTO() {
 		
 		ReleaseVo vo 		= new ReleaseVo();
@@ -83,6 +109,8 @@ public class ReleaseImpl extends BusinessObjectImpl implements Release{
 		vo.branchHardLockDate 	= this.getBranchHardLockDate();
 		vo.mcomDate				= this.getMcomDate();
 		vo.bcomDate				= this.getBcomDate();
+		vo.branchFreezeDate		= this.getBranchFreezeDate();
+		vo.branchProductionDate = this.getBranchProductionDate();
 		
 		return vo;
 	}

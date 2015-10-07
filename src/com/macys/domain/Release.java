@@ -20,4 +20,12 @@ public interface Release extends BusinessObject {
 
 	public abstract String getBranchCutDate();
 
+	public abstract void setBranchProductionDate(String branchProductionDate);
+
+	public abstract String getBranchProductionDate();
+
+	public abstract void setBranchFreezeDate(String branchFreezeDate);
+
+	public abstract String getBranchFreezeDate();
+
 }

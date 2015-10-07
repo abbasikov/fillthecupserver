@@ -10,10 +10,12 @@ import flexjson.JSON;
 
 public class MatrixVo {
 	
+	public final int INITIAL_ROWS = 6;
+	
 	public MatrixVo() {
 		this.columns = new ArrayList<SystemComponentVo>();
 		this.data	 = new ArrayList<MatrixRow>();
-		for(int i=0;i<9;i++){
+		for(int i=0;i<INITIAL_ROWS;i++){
 			this.data.add(new MatrixRow());
 		}
 		

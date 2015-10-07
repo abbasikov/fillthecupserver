@@ -242,6 +242,7 @@ public class LabService extends BaseService{
 		releaseCup.setLabUuid(labUuid);
 		releaseCup.setSysComponents(sysComponents);
 		releaseCup.setMatrixJson(JsonUtils.toJson(matrix));
+		releaseCup.setLastClicked("");
 		
 		//Saving the cup
 		releaseCup = (ReleaseCup)dao.saveBusinessObject(releaseCup);

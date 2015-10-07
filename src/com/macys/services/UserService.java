@@ -48,8 +48,10 @@ public class UserService extends BaseService{
 			//Get Labs of user
 			List<Relationship> relations =  dao.findRelationshipByChildUuidAndType(user.getUuid(),RelationshipTypeEnum.LAB_USER.toString());
 			for (Relationship relationship : relations) {
-				Lab lab = (Lab)dao.getBusinessObjectByUuid(  relationship.getParentUuid() );
-				userVo.labs.add((LabVo)lab.createDTO());
+				Lab lab 	= (Lab)dao.getBusinessObjectByUuid(  relationship.getParentUuid() );
+				LabVo labVo = (LabVo)lab.createDTO();
+				//labVo.releaseCups = labService.getAllReleaseCupsByLabUuid(lab.getUuid());
+				userVo.labs.add(labVo);
 			}
 			
 			return userVo;
