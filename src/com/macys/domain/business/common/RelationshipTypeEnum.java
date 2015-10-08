@@ -3,7 +3,8 @@ package com.macys.domain.business.common;
 public enum RelationshipTypeEnum {
 	
 	LAB_USER("Lab_User",0),
-	LAB_SYSTEMCOMPONENT("Lab_SystemComponent",1);
+	LAB_SYSTEMCOMPONENT("Lab_SystemComponent",1),
+	RELEASECUP_IPM("RELEASECUP_IPM",2);
 	
 	String relationshipName;
 	int code;

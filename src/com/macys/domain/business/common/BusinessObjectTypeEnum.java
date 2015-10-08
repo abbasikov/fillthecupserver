@@ -11,8 +11,9 @@ public enum BusinessObjectTypeEnum {
 	LAB("LLAB1","LLab"),
 	SYSTEM_COMPONENT("SYSCO","SystemComponent"),
 	RELEASE("RELSE","Release"),
-	RELEASECUP("RELCP","ReleaseCup");
-
+	RELEASECUP("RELCP","ReleaseCup"),
+	IPM("IPMVO","IPM");
+	
 	String type;
 	String interfaceName;
 

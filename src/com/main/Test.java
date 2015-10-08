@@ -2,6 +2,9 @@ package com.main;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -55,7 +58,12 @@ public class Test {
 		System.out.println(random.substring(0,8));
 		MatrixVo mat = new MatrixVo();
 		//mat.settings = new SettingVo();
-		System.out.println(JsonUtils.toJson(mat));
+		Map<String, Object> map = new HashMap<String,Object>();
+		String s = "{ \"SmartPrompt\" : [{\"Controller\": \"3\",\"QE\":\"3\", \"SDP\":\"5\"} , {\"Controller\": \"3\",\"QE\":\"3\", \"SDP\":\"5\"}] }";
+		Map<String, Object> m =JsonUtils.mapFromJson(s); 
+		List<Object> fff = (List<Object>)m.get("SmartPrompt");
+		Map<String, String> hh = (Map<String, String>)fff.get(0);
+		System.out.println(hh);
 	}
 
 	@Override

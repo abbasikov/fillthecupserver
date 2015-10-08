@@ -39,6 +39,8 @@ public class ReleaseCupImpl extends BusinessObjectImpl implements ReleaseCup{
 	@PersistentMetadata
 	private String matrixJson;
 	
+	private String ipmTree;
+	
 	@PersistentMetadata
 	private String lastClicked;
 	
@@ -120,6 +122,16 @@ public class ReleaseCupImpl extends BusinessObjectImpl implements ReleaseCup{
 	@Override
 	public void setLastClicked(String lastClicked) {
 		this.lastClicked = lastClicked;
+	}
+	
+	@Override
+	public String getIpmTree() {
+		return ipmTree;
+	}
+
+	@Override
+	public void setIpmTree(String ipmTree) {
+		this.ipmTree = ipmTree;
 	}
 
 	@Override

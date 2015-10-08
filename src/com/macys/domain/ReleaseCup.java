@@ -36,4 +36,8 @@ public interface ReleaseCup extends BusinessObject{
 
 	public abstract String getLastClicked();
 
+	public abstract void setIpmTree(String ipmTree);
+
+	public abstract String getIpmTree();
+
 }
