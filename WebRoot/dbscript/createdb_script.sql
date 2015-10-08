@@ -120,6 +120,25 @@ CREATE
     ) 
     ENGINE= InnoDB DEFAULT CHARSET=utf8;
     
+CREATE 
+    TABLE `dbobject_metadata_json` 
+    (
+        `client_id` smallint NOT NULL default 0,
+        `type` varchar(5),
+        `uuid` varchar(32) NOT NULL, 
+        `property_name` varchar(20) NOT NULL,
+        `name` varchar(255) NOT NULL, 
+        `value` mediumtext, 
+        `created_by` varchar(32) NOT NULL, 
+        `created_on` timestamp NOT NULL default CURRENT_TIMESTAMP, 
+        `status` smallint default 0, 
+        `status_modified_on` timestamp null,
+        PRIMARY KEY (`uuid`,`name`),
+        KEY `idx_dbobject_object_metadata_json_type` (`type`),
+        KEY `idx_dbobject_object_metadata_json_client_id` (`client_id`)
+    ) 
+    ENGINE= InnoDB DEFAULT CHARSET=utf8; 
+    
 SET FOREIGN_KEY_CHECKS=1;    
 
 
