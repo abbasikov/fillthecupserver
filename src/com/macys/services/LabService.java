@@ -1,11 +1,7 @@
 package com.macys.services;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import com.macys.domain.IPM;
 import com.macys.domain.Lab;
 import com.macys.domain.Release;
 import com.macys.domain.ReleaseCup;
@@ -20,7 +16,7 @@ import com.macys.exceptions.ServiceException;
 import com.macys.utils.Constants;
 import com.macys.utils.JsonUtils;
 import com.macys.utils.ServiceUtils;
-import com.macys.valuesobjects.IPMVo;
+import com.macys.valuesobjects.IPMTreeVo;
 import com.macys.valuesobjects.LabVo;
 import com.macys.valuesobjects.MatrixVo;
 import com.macys.valuesobjects.ReleaseCupVo;
@@ -238,6 +234,7 @@ public class LabService extends BaseService{
 		MatrixVo matrix 	= new MatrixVo();
 		matrix.updateColums(systemComponents);
 		
+		IPMTreeVo tree = new IPMTreeVo();
 		
 		
 		ReleaseCup releaseCup = (ReleaseCup)dao.emptyBusinessObject(BusinessObjectTypeEnum.RELEASECUP, release.getName(), Constants.SYSTEM_USER);
@@ -248,38 +245,18 @@ public class LabService extends BaseService{
 		releaseCup.setLabUuid(labUuid);
 		releaseCup.setSysComponents(sysComponents);
 		releaseCup.setMatrixJson(JsonUtils.toJson(matrix));
+		releaseCup.setIpmTree(JsonUtils.toJson(tree));
 		releaseCup.setLastClicked("");
 		
 		//Saving the cup
 		releaseCup = (ReleaseCup)dao.saveBusinessObject(releaseCup);
-		
-		IPM ipm1 = (IPM)dao.emptyBusinessObject(BusinessObjectTypeEnum.IPM, "IPM1", Constants.SYSTEM_USER);
-		ipm1.setMvpMatrixJson("");
-		
-		IPM ipm2 = (IPM)dao.emptyBusinessObject(BusinessObjectTypeEnum.IPM, "IPM2", Constants.SYSTEM_USER);
-		ipm2.setMvpMatrixJson("");
-		
-		IPM ipm3 = (IPM)dao.emptyBusinessObject(BusinessObjectTypeEnum.IPM, "IPM3", Constants.SYSTEM_USER);
-		ipm3.setMvpMatrixJson("");
-		
-		IPM ipm4 = (IPM)dao.emptyBusinessObject(BusinessObjectTypeEnum.IPM, "IPM4", Constants.SYSTEM_USER);
-		ipm4.setMvpMatrixJson("");
-		
-		dao.saveBusinessObject(ipm1);
-		dao.saveBusinessObject(ipm2);
-		dao.saveBusinessObject(ipm3);
-		dao.saveBusinessObject(ipm4);
-		
-		dao.saveRelationship(releaseCup.getUuid(), ipm1.getUuid(), RelationshipTypeEnum.RELEASECUP_IPM.toString(), Constants.SYSTEM_USER);
-		dao.saveRelationship(releaseCup.getUuid(), ipm2.getUuid(), RelationshipTypeEnum.RELEASECUP_IPM.toString(), Constants.SYSTEM_USER);
-		dao.saveRelationship(releaseCup.getUuid(), ipm3.getUuid(), RelationshipTypeEnum.RELEASECUP_IPM.toString(), Constants.SYSTEM_USER);
-		dao.saveRelationship(releaseCup.getUuid(), ipm4.getUuid(), RelationshipTypeEnum.RELEASECUP_IPM.toString(), Constants.SYSTEM_USER);
 		
 		ReleaseCupVo releaseCupVo 	= (ReleaseCupVo)releaseCup.createDTO();
 		releaseCupVo.sysComponents	= systemComponents;
 		releaseCupVo.release		= (ReleaseVo)release.createDTO();
 		releaseCupVo.lab			= (LabVo)lab.createDTO();
 		releaseCupVo.matrix			= releaseCup.getMatrixJson();
+		releaseCupVo.ipmTree		= releaseCup.getIpmTree();
 		
 		return releaseCupVo;
 	}
@@ -297,6 +274,7 @@ public class LabService extends BaseService{
 		releaseCupVo.release		= getRelease(releaseCup.getReleaseUuid(), false);
 		releaseCupVo.lab			= getLab(releaseCup.getLabUuid(), false);
 		releaseCupVo.matrix			= releaseCup.getMatrixJson();
+		releaseCupVo.ipmTree		= releaseCup.getIpmTree();
 		
 		return releaseCupVo;
 	}
@@ -326,6 +304,7 @@ public class LabService extends BaseService{
 				releaseCupVo.lab			= (LabVo)lab.createDTO();
 				releaseCupVo.sysComponents	= getSystemComponentsListByDelimiter(releaseCup.getSysComponents(), ";");
 				releaseCupVo.matrix			= releaseCup.getMatrixJson();
+				releaseCupVo.ipmTree		= releaseCup.getIpmTree();
 				
 				listToReturn.add(releaseCupVo);
 			}
@@ -333,23 +312,5 @@ public class LabService extends BaseService{
 	
 		return listToReturn;
 	}
-
-	public List<IPMVo> getAllIPMSByReleaseCupUuid(String releaseCupUuid) throws ServiceException {
-		ServiceUtils.verifyNotBlank(releaseCupUuid, 		"releaseCupUuid");
-		List<IPMVo> voList = new ArrayList<IPMVo>();
-		List<Relationship> relations =  dao.findChildrenWithRelationshipType(releaseCupUuid, RelationshipTypeEnum.RELEASECUP_IPM);
-		
-		for (Relationship relationship : relations) {
-			String ipmUuid = relationship.getChildUuid();
-			IPM ipm = (IPM)dao.getBusinessObjectByUuid(ipmUuid);
-			voList.add((IPMVo)ipm.createDTO());
-		}
-		
-		return voList;
-		
-	}
-
-	
-	
 	
 }

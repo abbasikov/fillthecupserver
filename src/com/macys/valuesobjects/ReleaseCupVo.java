@@ -19,4 +19,6 @@ public class ReleaseCupVo extends BaseDTO {
 	public String matrix;
 	
 	public String lastClicked;
+
+	public String ipmTree;
 }

@@ -1,41 +1,25 @@
 package com.macys.valuesobjects;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.macys.domain.business.common.BusinessObjectTypeEnum;
-import com.macys.utils.AppUtils;
-import com.macys.valuesobjects.MatrixVo.MatrixRow;
+import java.util.HashMap;
+import java.util.Map;
 
 import flexjson.JSON;
 
 public class IPMTreeVo {
-
-	public final int INITIAL_ROWS = 6;
+	
+	Map<String, Object> ipms = null;
 	
 	public IPMTreeVo() {
-		this.columns = new ArrayList<SystemComponentVo>();
-		this.data	 = new ArrayList<MatrixRow>();
-		
-		
-		this.columns.add(new SystemComponentVo(AppUtils.randomUuid(), "MVPs", BusinessObjectTypeEnum.SYSTEM_COMPONENT.toString()));
-		this.columns.add(new SystemComponentVo(AppUtils.randomUuid(), "IPM", BusinessObjectTypeEnum.SYSTEM_COMPONENT.toString()));
-	}
-	
-	private List<SystemComponentVo> 	columns;
-	private List<MatrixRow>				data;;	
-	
-	public void updateColums(List<SystemComponentVo> uColums){
-		this.columns.addAll(uColums);
+		ipms = new HashMap<String, Object>();
+		ipms.put("IPM1", null);
+		ipms.put("IPM2", null);
+		ipms.put("IPM3", null);
+		ipms.put("IPM4", null);
 	}
 	
 	@JSON(include=true)
-	public List<MatrixRow> getData(){
-		return data;
+	public Map<String, Object> getIpms() {
+		return ipms;
 	}
 	
-	@JSON(include=true)
-	public List<SystemComponentVo> getColumns(){
-		return columns;
-	}
 }

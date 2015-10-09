@@ -39,6 +39,7 @@ public class ReleaseCupImpl extends BusinessObjectImpl implements ReleaseCup{
 	@PersistentMetadata
 	private String matrixJson;
 	
+	@PersistentMetadata
 	private String ipmTree;
 	
 	@PersistentMetadata

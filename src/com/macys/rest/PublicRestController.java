@@ -23,14 +23,12 @@ import com.macys.exceptions.ServiceException;
 import com.macys.services.LabService;
 import com.macys.services.UserService;
 import com.macys.utils.Constants;
-import com.macys.valuesobjects.IPMVo;
 import com.macys.valuesobjects.LabVo;
 import com.macys.valuesobjects.ReleaseCupVo;
 import com.macys.valuesobjects.ReleaseVo;
 import com.macys.valuesobjects.SystemComponentVo;
 import com.macys.valuesobjects.UserVo;
 import com.macys.valuesobjects.containers.BaseContainerVo;
-import com.macys.valuesobjects.containers.IPMContainerVo;
 import com.macys.valuesobjects.containers.LabContainerVo;
 import com.macys.valuesobjects.containers.ReleaseContainerVo;
 import com.macys.valuesobjects.containers.ReleaseCupContainerVo;
@@ -345,35 +343,6 @@ public class PublicRestController extends BaseRestController{
 			ReleaseCupVo vo 		=  labService.getReleaseCupByUuid(releaseCupUuid);
 			container.meta.code 	= Constants.SUCCESS;
 			container.data			= vo;
-			return container;
-		}
-		catch(ServiceException exc){
-			exc.printStackTrace(System.err);
-			container.meta.code 		= exc.getErrorCodeEnum().getCode();
-			container.meta.error 		= exc.getErrorCodeEnum().getMessage();
-			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return container;
-		}
-		catch(Exception exc){
-			exc.printStackTrace(System.err);
-			container.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
-			container.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
-			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return container;
-		}
-	}
-	
-	@GET
-	@Path("/releasecups/{releaseCupUuid}/ipms")
-	@Produces( MediaType.APPLICATION_JSON )
-	@ApiOperation(value = "Get All IPMs",response=IPMContainerVo.class)
-	public BaseContainerVo getAllIPMS(@ApiParam(value="releaseCupUuid",required=true) @PathParam("releaseCupUuid") String releaseCupUuid){
- 
-		IPMContainerVo container = new IPMContainerVo();
-		try{
-			List<IPMVo> voList 		=  labService.getAllIPMSByReleaseCupUuid(releaseCupUuid);
-			container.meta.code 	= Constants.SUCCESS;
-			container.dataList		= voList;
 			return container;
 		}
 		catch(ServiceException exc){
