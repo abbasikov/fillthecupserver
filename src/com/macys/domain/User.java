@@ -15,5 +15,25 @@ public interface User extends BusinessObject{
 	public abstract void setUserName(String userName);
 
 	public abstract String getUserName();
+
+	public abstract void setUserEmail(String userEmail);
+
+	public abstract String getUserEmail();
+
+	public abstract void setLastName(String lastName);
+
+	public abstract String getLastName();
+
+	public abstract void setFirstName(String firstName);
+
+	public abstract String getFirstName();
+
+	public abstract void setIsLabUser(String isLabUser);
+
+	public abstract String getIsLabUser();
+
+	public abstract void setIsLabManager(String isLabManager);
+
+	public abstract String getIsLabManager();
 		
 }

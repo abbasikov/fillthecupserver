@@ -67,27 +67,27 @@ public class PublicRestController extends BaseRestController{
 			@ApiParam(value="UserName",required=true) @FormParam("userName") String userName, 
 			@ApiParam(value="Password",required=true) @FormParam("password") String password){
 
-		UserContainerVo empContainer = new UserContainerVo();
+		UserContainerVo container = new UserContainerVo();
 		
 		try{
 			UserVo empvo 					= userService.login(userName,password);
-			empContainer.meta.code 			= Constants.SUCCESS;
-			empContainer.data 				= empvo;
-			return empContainer;
+			container.meta.code 			= Constants.SUCCESS;
+			container.data 				= empvo;
+			return container;
 		}
 		catch(ServiceException exc){
 			exc.printStackTrace(System.err);
-			empContainer.meta.code 		= exc.getErrorCodeEnum().getCode();
-			empContainer.meta.error 	= exc.getErrorCodeEnum().getMessage();
-			empContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return empContainer;
+			container.meta.code 		= exc.getErrorCodeEnum().getCode();
+			container.meta.error 	= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
 		}
 		catch(Exception exc){
 			exc.printStackTrace(System.err);
-			empContainer.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
-			empContainer.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
-			empContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return empContainer;
+			container.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
 		}
 	}
 	
@@ -393,38 +393,43 @@ public class PublicRestController extends BaseRestController{
 	@POST
 	@Path("/labs")
 	@Produces( MediaType.APPLICATION_JSON )
-	@ApiOperation(value = "Register Lab",response=LabContainerVo.class)
+	@ApiOperation(value = "Register Lab",response=UserContainerVo.class)
 	public BaseContainerVo createLab(
+			@ApiParam(value="First Name",	required=true) 	@FormParam("firstName") 		String firstName,
+			@ApiParam(value="Last Name",	required=true) 	@FormParam("lastName") 			String lastName,
+			@ApiParam(value="User Email",	required=true) 	@FormParam("userEmail") 		String userEmail,
 			@ApiParam(value="Lab Name",		required=true) 	@FormParam("labName") 			String labName, 
 			@ApiParam(value="Manager Name",	required=true)	@FormParam("managerName") 		String managerName, 
 			@ApiParam(value="PDM Name",		required=true)	@FormParam("pdmName") 			String pdmName, 
 			@ApiParam(value="UserName",		required=true)	@FormParam("userName") 			String userName,
 			@ApiParam(value="Password",		required=true)	@FormParam("password") 			String password,
-			@ApiParam(value="IsSuperAdmin",	required=true)	@FormParam("isSuperAdmin") 		String isSuperAdmin
+			@ApiParam(value="IsSuperAdmin",	required=true)	@FormParam("isSuperAdmin") 		String isSuperAdmin,
+			@ApiParam(value="IsLabManager",	required=true)	@FormParam("isLabManager") 		String isLabManager,
+			@ApiParam(value="IsLabUser",	required=true)	@FormParam("isLabUser") 		String isLabUser
 									) {
 		
-		LabContainerVo labContainer = new LabContainerVo();
+		UserContainerVo container = new UserContainerVo();
 		 
 		try{
 			
-			LabVo labVo 				= userService.createLabAndUser(labName,managerName,pdmName,userName,password,isSuperAdmin);
-			labContainer.meta.code 	= Constants.SUCCESS;
-			labContainer.data 			= labVo;
-			return labContainer;
+			UserVo userVo 			= userService.createLabAndUser(firstName,lastName,userEmail,labName,managerName,pdmName,userName,password,isSuperAdmin,isLabManager,isLabUser);
+			container.meta.code 	= Constants.SUCCESS;
+			container.data 			= userVo;
+			return container;
 		}
 		catch(ServiceException exc){
 			exc.printStackTrace(System.err);
-			labContainer.meta.code 	= exc.getErrorCodeEnum().getCode();
-			labContainer.meta.error 	= exc.getErrorCodeEnum().getMessage();
-			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return labContainer;
+			container.meta.code 	= exc.getErrorCodeEnum().getCode();
+			container.meta.error 	= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
 		}
 		catch(Exception exc){
 			exc.printStackTrace(System.err);
-			labContainer.meta.code 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
-			labContainer.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
-			labContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
-			return labContainer;
+			container.meta.code 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
 		}
 	}
 	

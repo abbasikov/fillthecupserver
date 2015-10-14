@@ -20,6 +20,15 @@ public class UserImpl extends BusinessObjectImpl implements User{
 	}
 	
 	@PersistentMetadata
+	private String firstName;
+	
+	@PersistentMetadata
+	private String lastName;
+	
+	@PersistentMetadata
+	private String userEmail;
+	
+	@PersistentMetadata
 	private String userName;
 	
 	@PersistentMetadata
@@ -27,6 +36,12 @@ public class UserImpl extends BusinessObjectImpl implements User{
 	
 	@PersistentMetadata
 	private String isSuperAdmin;
+	
+	@PersistentMetadata
+	private String isLabManager;
+	
+	@PersistentMetadata
+	private String isLabUser;
 	
 	@Override
 	public String getUserName() {
@@ -57,18 +72,74 @@ public class UserImpl extends BusinessObjectImpl implements User{
 	public void setIsSuperAdmin(String isSuperAdmin) {
 		this.isSuperAdmin = isSuperAdmin;
 	}
+	
+	@Override
+	public String getFirstName() {
+		return firstName;
+	}
+
+	@Override
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	@Override
+	public String getLastName() {
+		return lastName;
+	}
+
+	@Override
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	@Override
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	@Override
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
+	
+	@Override
+	public String getIsLabManager() {
+		return isLabManager;
+	}
+
+	@Override
+	public void setIsLabManager(String isLabManager) {
+		this.isLabManager = isLabManager;
+	}
+
+	@Override
+	public String getIsLabUser() {
+		return isLabUser;
+	}
+
+	@Override
+	public void setIsLabUser(String isLabUser) {
+		this.isLabUser = isLabUser;
+	}
 
 	@Override
 	public BaseDTO createDTO(){
-		
 		UserVo vo = new UserVo();
+		
 		vo.name = this.getName();
 		vo.type = this.getType();
 		vo.uuid = this.getUuid();
 		vo.createdOnISO8601	= AppUtils.getDateISO8601(this.getCreatedOn());
 		
 		vo.username		= this.getUserName();
-		vo.isSuperAdmin = StringUtils.isBlank(this.getIsSuperAdmin()) ? "false":this.getIsSuperAdmin();
+		vo.isSuperAdmin = StringUtils.isBlank(this.getIsSuperAdmin()) 	? "false":this.getIsSuperAdmin();
+		vo.isLabManager	= StringUtils.isBlank(this.getIsLabManager()) 	? "false":this.getIsLabManager();
+		vo.isLabUser	= StringUtils.isBlank(this.getIsLabUser()) 		? "false":this.getIsLabUser();
+		
+		vo.firstName	= this.getFirstName();
+		vo.lastName		= this.getLastName();
+		vo.userEmail	= this.getUserEmail();
 		
 		return vo;
 	}
