@@ -35,6 +35,9 @@ public class UserImpl extends BusinessObjectImpl implements User{
 	private String password;
 	
 	@PersistentMetadata
+	private String isPasswordReset;
+	
+	@PersistentMetadata
 	private String isSuperAdmin;
 	
 	@PersistentMetadata
@@ -122,6 +125,16 @@ public class UserImpl extends BusinessObjectImpl implements User{
 	public void setIsLabUser(String isLabUser) {
 		this.isLabUser = isLabUser;
 	}
+	
+	@Override
+	public String getIsPasswordReset() {
+		return isPasswordReset;
+	}
+
+	@Override
+	public void setIsPasswordReset(String isPasswordReset) {
+		this.isPasswordReset = isPasswordReset;
+	}
 
 	@Override
 	public BaseDTO createDTO(){
@@ -131,11 +144,13 @@ public class UserImpl extends BusinessObjectImpl implements User{
 		vo.type = this.getType();
 		vo.uuid = this.getUuid();
 		vo.createdOnISO8601	= AppUtils.getDateISO8601(this.getCreatedOn());
+		vo.createdBy		= this.getCreatedBy();
 		
-		vo.username		= this.getUserName();
-		vo.isSuperAdmin = StringUtils.isBlank(this.getIsSuperAdmin()) 	? "false":this.getIsSuperAdmin();
-		vo.isLabManager	= StringUtils.isBlank(this.getIsLabManager()) 	? "false":this.getIsLabManager();
-		vo.isLabUser	= StringUtils.isBlank(this.getIsLabUser()) 		? "false":this.getIsLabUser();
+		vo.username			= this.getUserName();
+		vo.isSuperAdmin 	= StringUtils.isBlank(this.getIsSuperAdmin()) 	? "false":this.getIsSuperAdmin();
+		vo.isLabManager		= StringUtils.isBlank(this.getIsLabManager()) 	? "false":this.getIsLabManager();
+		vo.isLabUser		= StringUtils.isBlank(this.getIsLabUser()) 		? "false":this.getIsLabUser();
+		vo.isPasswordReset 	= StringUtils.isBlank(this.getIsPasswordReset())? "false":this.getIsPasswordReset();
 		
 		vo.firstName	= this.getFirstName();
 		vo.lastName		= this.getLastName();

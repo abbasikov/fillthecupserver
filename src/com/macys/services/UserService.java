@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.macys.domain.Lab;
 import com.macys.domain.User;
+import com.macys.domain.business.BusinessObject;
 import com.macys.domain.business.common.BusinessObjectTypeEnum;
 import com.macys.domain.business.common.Relationship;
 import com.macys.domain.business.common.RelationshipTypeEnum;
@@ -52,9 +53,11 @@ public class UserService extends BaseService{
 			List<Relationship> relationsLabUsers =  dao.findRelationshipByChildUuidAndType(user.getUuid(),RelationshipTypeEnum.LAB_USER.toString());
 			for (Relationship relationship : relationsLabUsers) {
 				Lab lab 	= (Lab)dao.getBusinessObjectByUuid(  relationship.getParentUuid() );
-				LabVo labVo = (LabVo)lab.createDTO();
-				//labVo.releaseCups = labService.getAllReleaseCupsByLabUuid(lab.getUuid());
-				userVo.labs.add(labVo);
+				if(lab !=null && lab.getIsActivated().equals("true")){
+					LabVo labVo = (LabVo)lab.createDTO();
+					//labVo.releaseCups = labService.getAllReleaseCupsByLabUuid(lab.getUuid());
+					userVo.labs.add(labVo);	
+				}
 			}
 			
 			return userVo;
@@ -67,9 +70,10 @@ public class UserService extends BaseService{
 		}
 	}
 	
-	public UserVo createUser(String firstName, String lastName, String userEmail, String userName, String password, String isSuperAdmin, String isLabManager, String isLabUser) throws ServiceException{
+	public UserVo createUser(String firstName, String lastName, String userEmail, String userName, String password, String isSuperAdmin, String isLabManager, String isLabUser,String isPasswordReset,String createdBy) throws ServiceException{
 		ServiceUtils.verifyNotBlank(userName, 		"userName");
 		ServiceUtils.verifyNotBlank(password, 		"password");
+		ServiceUtils.verifyNotBlank(firstName, 		"firstName");
 		
 		//check if a user with this username already exists
 		List<String> userUuids = dao.findUuidsByMetadata(BusinessObjectTypeEnum.USER, "userName", userName);
@@ -79,12 +83,13 @@ public class UserService extends BaseService{
 			throw new ServiceException("Username:"+userName+" already exists.",ErrorCodeEnum.USERNAME_ALREADY_EXISTS);
 		}
 		
-		User user = (User)dao.emptyBusinessObject(BusinessObjectTypeEnum.USER, userName, Constants.SYSTEM_USER);
+		User user = (User)dao.emptyBusinessObject(BusinessObjectTypeEnum.USER, userName, createdBy);
 		user.setUserName(userName);
 		user.setPassword(EncryptionUtils.encryptPassword( password ));
 		user.setFirstName(firstName);
 		user.setLastName(lastName);
 		user.setUserEmail(userEmail);
+		user.setIsPasswordReset(isPasswordReset);
 		user.setIsSuperAdmin( 	StringUtils.isBlank(isSuperAdmin) 	? "false" : isSuperAdmin 	);
 		user.setIsLabManager( 	StringUtils.isBlank(isLabManager) 	? "false" : isLabManager 	);
 		user.setIsLabUser(	StringUtils.isBlank(isLabUser) 		? "false" : isLabUser		);
@@ -98,10 +103,10 @@ public class UserService extends BaseService{
 	public UserVo createLabAndUser(String firstName, String lastName, String userEmail, String labName, String managerName, String pdmName,String userName,String password, String isSuperAdmin,String isLabManager, String isLabUser) throws ServiceException {
 		
 		//First Create The User
-		UserVo userVo = createUser(firstName,lastName,userEmail,userName, password, isSuperAdmin, isLabManager, isLabUser);
+		UserVo userVo = createUser(firstName,lastName,userEmail,userName, password, isSuperAdmin, isLabManager, isLabUser,"false",firstName+" "+lastName);
 		
 		//Second Create The Lab
-		LabVo labVo   = labService.createLab(labName, managerName, pdmName);
+		LabVo labVo   = labService.createLab(labName, managerName, pdmName,firstName+" "+lastName);
 		
 		//Save the relationship b/w lab and user
 		dao.saveRelationship(labVo.uuid, userVo.uuid, RelationshipTypeEnum.LAB_USER.toString(), Constants.SYSTEM_USER);
@@ -115,6 +120,33 @@ public class UserService extends BaseService{
 		
 	public void setLabService(LabService labService) {
 		this.labService = labService;
+	}
+
+	public List<UserVo> getAllUsersByLabUuid(String labUuid) throws ServiceException {
+		List<UserVo> listToReturn = new ArrayList<UserVo>();
+		
+		List<Relationship> relations =  dao.findChildrenWithRelationshipType(labUuid, RelationshipTypeEnum.LAB_USER);
+		for (Relationship relationship : relations) {
+			User user 	= (User)dao.getBusinessObjectByUuid(  relationship.getChildUuid() );
+			if(user !=null){
+				UserVo userVo = (UserVo)user.createDTO();
+				listToReturn.add(userVo);
+			}
+		}
+		return listToReturn;
+	}
+
+	public List<UserVo> getAllUsers() throws ServiceException {
+		List<UserVo> users = new ArrayList<UserVo>();
+		
+		List<BusinessObject> businessObjects =  dao.findBusinessObjectsByType(BusinessObjectTypeEnum.USER);
+		if(businessObjects != null){
+			for (BusinessObject businessObject : businessObjects) {
+				User user = (User) businessObject;
+				users.add((UserVo)user.createDTO());
+			}
+		}
+		return users;
 	}
 	
 			

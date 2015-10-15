@@ -14,10 +14,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
-
 import com.macys.exceptions.ErrorCodeEnum;
 import com.macys.exceptions.ServiceException;
 import com.macys.services.LabService;
@@ -390,11 +388,40 @@ public class PublicRestController extends BaseRestController{
 		}
 	}
 	
-	@POST
-	@Path("/labs")
+	@GET
+	@Path("/labs/{labUuid}/users")
 	@Produces( MediaType.APPLICATION_JSON )
-	@ApiOperation(value = "Register Lab",response=UserContainerVo.class)
-	public BaseContainerVo createLab(
+	@ApiOperation(value = "Get All Users By Lab Uuid",response=UserContainerVo.class)
+	public BaseContainerVo getAllUsersByLabUuid(@ApiParam(value="labUuid",required=true) @PathParam("labUuid") String labUuid){
+ 
+		UserContainerVo container = new UserContainerVo();
+		try{
+			List<UserVo> voList 	=  userService.getAllUsersByLabUuid(labUuid);
+			container.meta.code 		= Constants.SUCCESS;
+			container.dataList			= voList;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= exc.getErrorCodeEnum().getCode();
+			container.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+	}
+	
+	@POST
+	@Path("/register")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Register Lab And User",response=UserContainerVo.class)
+	public BaseContainerVo register(
 			@ApiParam(value="First Name",	required=true) 	@FormParam("firstName") 		String firstName,
 			@ApiParam(value="Last Name",	required=true) 	@FormParam("lastName") 			String lastName,
 			@ApiParam(value="User Email",	required=true) 	@FormParam("userEmail") 		String userEmail,
@@ -464,7 +491,42 @@ public class PublicRestController extends BaseRestController{
 	}
 	
 	@POST
-	@Path("/deletelab")
+	@Path("/labs")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Create Lab",response=LabContainerVo.class)
+	public BaseContainerVo createLab(
+			@ApiParam(value="Lab Name",		required=true) 		@FormParam("labName") 			String labName, 
+			@ApiParam(value="Manager Name",	required=true)		@FormParam("managerName") 		String managerName, 
+			@ApiParam(value="PDM Name",		required=true)		@FormParam("pdmName") 			String pdmName,
+			@ApiParam(value="Created By",		required=true)	@FormParam("createdBy") 		String createdBy) {
+		
+		LabContainerVo container = new LabContainerVo();
+		 
+		try{
+			
+			LabVo labVo 			= labService.createLab(labName, managerName, pdmName, createdBy);
+			container.meta.code 	= Constants.SUCCESS;
+			container.data 			= labVo;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 	= exc.getErrorCodeEnum().getCode();
+			container.meta.error 	= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+	}
+		
+	@POST
+	@Path("/deletebusinessobject")
 	@Produces( MediaType.APPLICATION_JSON )
 	@ApiOperation(value = "Delete Lab",response=BaseContainerVo.class)
 	public BaseContainerVo deleteLab(@ApiParam(value="uuid",required=true) @FormParam("uuid") String uuid){
@@ -488,6 +550,146 @@ public class PublicRestController extends BaseRestController{
 			baseContainer.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
 			baseContainer.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
 			return baseContainer;
+		}
+	}
+	
+	@GET
+	@Path("/users/{userUuid}/labs")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Get All Labs By User Uuid",response=LabVo.class)
+	public BaseContainerVo getAllLabsByUserUuid(@ApiParam(value="userUuid",required=true) @PathParam("userUuid") String userUuid){
+ 
+		LabContainerVo container = new LabContainerVo();
+		try{
+			List<LabVo> voList	=  labService.getAllLabsByUserUuid(userUuid);
+			container.meta.code = Constants.SUCCESS;
+			container.dataList	= voList;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= exc.getErrorCodeEnum().getCode();
+			container.meta.error 		= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+	}
+	
+	@POST
+	@Path("/users")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Create User",response=UserContainerVo.class)
+	public BaseContainerVo createUser(
+			@ApiParam(value="First Name",	required=true) 	@FormParam("firstName") 		String firstName,
+			@ApiParam(value="Last Name",	required=true) 	@FormParam("lastName") 			String lastName,
+			@ApiParam(value="User Email",	required=true) 	@FormParam("userEmail") 		String userEmail,
+			@ApiParam(value="UserName",		required=true)	@FormParam("userName") 			String userName,
+			@ApiParam(value="Password",		required=true)	@FormParam("password") 			String password,
+			@ApiParam(value="IsSuperAdmin",	required=true)	@FormParam("isSuperAdmin") 		String isSuperAdmin,
+			@ApiParam(value="IsLabManager",	required=true)	@FormParam("isLabManager") 		String isLabManager,
+			@ApiParam(value="IsLabUser",	required=true)	@FormParam("isLabUser") 		String isLabUser,
+			@ApiParam(value="IsPasswordReset",required=true)@FormParam("isPasswordReset") 		String isPasswordReset,
+			@ApiParam(value="CreatedBy",	required=true)	@FormParam("createdBy") 		String createdBy,
+			@ApiParam(value="LabUuids",		required=true)	@FormParam("labUuids") 			String labUuids
+									) {
+		
+		UserContainerVo container = new UserContainerVo();
+		 
+		try{
+			
+			UserVo userVo 			= userService.createUser(firstName,lastName,userEmail,userName,password,isSuperAdmin,isLabManager,isLabUser,isPasswordReset,createdBy);
+			
+			//Asigning Lab
+			labService.assignLabsToUser(userVo.uuid,labUuids,";",createdBy);
+			
+			container.meta.code 	= Constants.SUCCESS;
+			container.data 			= userVo;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 	= exc.getErrorCodeEnum().getCode();
+			container.meta.error 	= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+	}
+	
+	@POST
+	@Path("/assignlabstouser")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Assign Lab To User",response=BaseContainerVo.class)
+	public BaseContainerVo assignLabToUser(
+			@ApiParam(value="UserUuid",		required=true)	@FormParam("userUuid") 			String userUuid,
+			@ApiParam(value="LabUuids",		required=true)	@FormParam("labUuids") 			String labUuids,
+			@ApiParam(value="CreatedBy",	required=true)	@FormParam("createdBy") 		String createdBy
+									) {
+		
+		BaseContainerVo container = new BaseContainerVo();
+		 
+		try{
+			labService.assignLabsToUser(userUuid,labUuids,";",createdBy);
+			container.meta.code 	= Constants.SUCCESS;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 	= exc.getErrorCodeEnum().getCode();
+			container.meta.error 	= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+	}
+	
+	@GET
+	@Path("/users")
+	@Produces( MediaType.APPLICATION_JSON )
+	@ApiOperation(value = "Get All Users",response=UserContainerVo.class)
+	public BaseContainerVo getAllUsers() {
+		
+		UserContainerVo container = new UserContainerVo();
+		 
+		try{
+			
+			List<UserVo> list 		= userService.getAllUsers();
+			container.meta.code 	= Constants.SUCCESS;
+			container.dataList 		= list;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 	= exc.getErrorCodeEnum().getCode();
+			container.meta.error 	= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
 		}
 	}
 	

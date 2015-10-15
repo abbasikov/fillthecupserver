@@ -35,5 +35,9 @@ public interface User extends BusinessObject{
 	public abstract void setIsLabManager(String isLabManager);
 
 	public abstract String getIsLabManager();
+
+	public abstract void setIsPasswordReset(String isPasswordReset);
+
+	public abstract String getIsPasswordReset();
 		
 }

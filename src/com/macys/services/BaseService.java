@@ -1,5 +1,7 @@
 package com.macys.services;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.macys.dao.DAO;
 import com.macys.domain.business.BusinessObject;
 import com.macys.exceptions.ErrorCodeEnum;
@@ -16,6 +18,9 @@ public class BaseService {
 			ServiceUtils.verifyNotBlank(names, 		"names");
 			ServiceUtils.verifyNotBlank(values, 	"values");
 			
+			if(StringUtils.isBlank(delimiter)){
+				delimiter = ";";
+			}
 			
 			String[] namesArray = names.split(delimiter);
 			String[] valuesArray= values.split(delimiter);

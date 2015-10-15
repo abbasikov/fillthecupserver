@@ -29,6 +29,12 @@ public class LabImpl extends BusinessObjectImpl implements Lab {
 	
 	@PersistentMetadata
 	private String location;
+	
+	@PersistentMetadata
+	private String lastClicked;
+	
+	@PersistentMetadata
+	private String isActivated;
 
 	@Override
 	public String getDescription() {
@@ -69,6 +75,26 @@ public class LabImpl extends BusinessObjectImpl implements Lab {
 	public void setPdmName(String pdmName) {
 		this.pdmName = pdmName;
 	}
+	
+	@Override
+	public String getLastClicked() {
+		return lastClicked;
+	}
+
+	@Override
+	public void setLastClicked(String lastClicked) {
+		this.lastClicked = lastClicked;
+	}
+	
+	@Override
+	public String getIsActivated() {
+		return isActivated;
+	}
+
+	@Override
+	public void setIsActivated(String isActivated) {
+		this.isActivated = isActivated;
+	}
 
 	@Override
 	public BaseDTO createDTO(){
@@ -77,11 +103,14 @@ public class LabImpl extends BusinessObjectImpl implements Lab {
 		vo.type = this.getType();
 		vo.uuid = this.getUuid();
 		vo.createdOnISO8601	= AppUtils.getDateISO8601(this.getCreatedOn());
+		vo.createdBy		= this.getCreatedBy();
 		
 		vo.description 	= this.getDescription();
 		vo.location		= this.getLocation();
 		vo.pdmName		= this.getPdmName();
 		vo.managerName	= this.getManagerName();
+		vo.lastClicked	= this.getLastClicked();
+		vo.isActivated	= this.getIsActivated();
 		
 		return vo;
 	}

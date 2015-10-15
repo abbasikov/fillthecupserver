@@ -12,6 +12,10 @@ public class LabVo extends BaseDTO{
 	
 	public String location;
 	
+	public String lastClicked;
+	
+	public String isActivated;
+	
 	public List<UserVo> users;
 	
 	public List<ReleaseCupVo> releaseCups;

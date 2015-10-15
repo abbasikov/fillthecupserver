@@ -2,6 +2,9 @@ package com.macys.services;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.macys.domain.Lab;
 import com.macys.domain.Release;
 import com.macys.domain.ReleaseCup;
@@ -27,7 +30,7 @@ import com.macys.valuesobjects.UserVo;
 public class LabService extends BaseService{
 
 	
-	public LabVo createLab(String labName, String managerName,String pdmName)throws ServiceException {
+	public LabVo createLab(String labName, String managerName,String pdmName, String createdBy)throws ServiceException {
 		ServiceUtils.verifyNotBlank(labName, 		"labName");
 		ServiceUtils.verifyNotBlank(managerName, 	"managerName");
 		
@@ -36,6 +39,9 @@ public class LabService extends BaseService{
 		lab.setPdmName(pdmName);
 		lab.setDescription("");
 		lab.setLocation("");
+		lab.setLastClicked("");
+		lab.setCreatedBy(createdBy);
+		lab.setIsActivated("true");
 		
 		lab = (Lab)dao.saveBusinessObject(lab);
 		
@@ -76,7 +82,9 @@ public class LabService extends BaseService{
 				for (Relationship relationship : relations) {
 					String userUuid =  relationship.getChildUuid();
 					User user = (User)dao.getBusinessObjectByUuid(userUuid);
-					labVo.users.add((UserVo)user.createDTO());
+					if(user != null){
+						labVo.users.add((UserVo)user.createDTO());
+					}
 					labVo.releaseCups = getAllReleaseCupsByLabUuid(lab.getUuid());
 				}
 				
@@ -90,18 +98,18 @@ public class LabService extends BaseService{
 	public void deleteLab(String labUuid)throws ServiceException
 	{	
 		dao.deleteBusinessObjectByUuid(labUuid);
-		List<Relationship> relations = dao.findChildren(labUuid);
-		if(relations != null){
-			for (Relationship relationship : relations) {
-				try{
-					dao.deleteBusinessObjectByUuid(relationship.getChildUuid());
-					dao.deleteRelationShip(relationship.getParentUuid(), relationship.getChildUuid(), RelationshipTypeEnum.enumFromName( relationship.getType()));
-				}
-				catch(Exception exc){
-					
-				}
-			}
-		}
+//		List<Relationship> relations = dao.findChildren(labUuid);
+//		if(relations != null){
+//			for (Relationship relationship : relations) {
+//				try{
+//					dao.deleteBusinessObjectByUuid(relationship.getChildUuid());
+//					dao.deleteRelationShip(relationship.getParentUuid(), relationship.getChildUuid(), RelationshipTypeEnum.enumFromName( relationship.getType()));
+//				}
+//				catch(Exception exc){
+//					
+//				}
+//			}
+//		}
 	}
 	
 	public SystemComponentVo createSystemComponent(String name) throws ServiceException {
@@ -311,6 +319,52 @@ public class LabService extends BaseService{
 		}
 	
 		return listToReturn;
+	}
+	
+	public List<LabVo> getAllLabsByUserUuid(String userUuid) throws ServiceException{
+		
+		List<LabVo> labList = new ArrayList<LabVo>();
+		
+		//Get Labs of user
+		List<Relationship> relationsLabUsers =  dao.findRelationshipByChildUuidAndType(userUuid,RelationshipTypeEnum.LAB_USER.toString());
+		if(relationsLabUsers != null){
+			for (Relationship relationship : relationsLabUsers) {
+				Lab lab 	= (Lab)dao.getBusinessObjectByUuid(  relationship.getParentUuid() );
+				if(lab != null && lab.getIsActivated().toLowerCase().equals("true")){
+					LabVo labVo = (LabVo)lab.createDTO();
+					labList.add(labVo);
+				}
+				
+			}
+		}
+		
+		return labList;
+	}
+
+	public void assignLabsToUser(String userUuid, String labUuids, String delimeter, String createdBy) throws ServiceException {
+		
+		try{
+			//First Delete the Previous Relationships
+			List<Relationship> previousRelations =  dao.findRelationshipByChildUuidAndType(userUuid, RelationshipTypeEnum.LAB_USER.toString());
+			if(previousRelations != null){
+				for(Relationship previousRelation : previousRelations){
+					dao.deleteRelationShip(previousRelation.getParentUuid(), previousRelation.getChildUuid(),RelationshipTypeEnum.LAB_USER);
+				}
+			}
+			
+			
+			if(!StringUtils.isBlank(labUuids)){
+				String[] labsUuidsArray = labUuids.split(delimeter);
+				if(labsUuidsArray.length > 0){
+					for(String labUuid : labsUuidsArray){
+						dao.saveRelationship(labUuid, userUuid, RelationshipTypeEnum.LAB_USER.toString(), createdBy);
+					}
+				}
+			}
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+		}
 	}
 	
 }

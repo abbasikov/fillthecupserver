@@ -36,6 +36,10 @@ public class UserVo extends BaseDTO{
 	@JsonSerialize(include=Inclusion.NON_NULL)
 	public String isLabUser;
 	
+	@JsonProperty("isPasswordReset")
+	@JsonSerialize(include=Inclusion.NON_NULL)
+	public String isPasswordReset;
+	
 	@JsonProperty("labs")
 	@JsonSerialize(include=Inclusion.NON_NULL)
 	public List<LabVo> labs;

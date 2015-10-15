@@ -20,4 +20,12 @@ public interface Lab extends BusinessObject{
 
 	public abstract String getManagerName();
 
+	public abstract void setLastClicked(String lastClicked);
+
+	public abstract String getLastClicked();
+
+	public abstract void setIsActivated(String isActivated);
+
+	public abstract String getIsActivated();
+
 }
