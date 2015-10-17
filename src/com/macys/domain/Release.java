@@ -28,4 +28,8 @@ public interface Release extends BusinessObject {
 
 	public abstract String getBranchFreezeDate();
 
+	public abstract void setIsActivated(String isActivated);
+
+	public abstract String getIsActivated();
+
 }

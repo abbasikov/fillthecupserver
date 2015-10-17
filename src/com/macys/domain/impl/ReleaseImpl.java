@@ -1,5 +1,7 @@
 package com.macys.domain.impl;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.macys.dao.database.DBObject;
 import com.macys.domain.Release;
 import com.macys.domain.business.BusinessObjectImpl;
@@ -35,6 +37,9 @@ public class ReleaseImpl extends BusinessObjectImpl implements Release{
 	
 	@PersistentMetadata
 	private String bcomDate;
+	
+	@PersistentMetadata
+	private String isActivated;
 
 	@Override
 	public String getBranchCutDate() {
@@ -95,6 +100,16 @@ public class ReleaseImpl extends BusinessObjectImpl implements Release{
 	public void setBranchProductionDate(String branchProductionDate) {
 		this.branchProductionDate = branchProductionDate;
 	}
+	
+	@Override
+	public String getIsActivated() {
+		return isActivated;
+	}
+
+	@Override
+	public void setIsActivated(String isActivated) {
+		this.isActivated = isActivated;
+	}
 
 	@Override
 	public BaseDTO createDTO() {
@@ -111,6 +126,7 @@ public class ReleaseImpl extends BusinessObjectImpl implements Release{
 		vo.bcomDate				= this.getBcomDate();
 		vo.branchFreezeDate		= this.getBranchFreezeDate();
 		vo.branchProductionDate = this.getBranchProductionDate();
+		vo.isActivated			= StringUtils.isBlank(this.getIsActivated()) ? "false" : this.getIsActivated() ;
 		
 		return vo;
 	}

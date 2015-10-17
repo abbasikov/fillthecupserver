@@ -61,11 +61,19 @@ public class JdbcTemplateRepostiory extends JdbcDaoSupport {
 	public int updateMetadataByUuid(String uuid, String type, String name, String value){
 		
 		try{
-			String sql = "update dbobject_metadata set value=? where type=? and uuid = ? and name = ?";
+//			String selectCheck = "select dbobject_metadata where type=? and uuid = ? and name = ?";
+//			List<Map<String,Object>> list =  this.getJdbcTemplate().queryForList(selectCheck, new Object[]{value,type,uuid,name});
+//			if(list==null || list.size() <1){
+//				String insertSql = 
+//			}
+//			else{
+				String sql = "update dbobject_metadata set value=? where type=? and uuid = ? and name = ?";
+				
+				int rowsEffected =  this.getJdbcTemplate().update(sql, new Object[]{value,type,uuid,name});
+				
+				return rowsEffected;
+			//}
 			
-			int rowsEffected =  this.getJdbcTemplate().update(sql, new Object[]{value,type,uuid,name});
-			
-			return rowsEffected;
 		}
 		catch(Exception exc){
 			//ignore expcetion

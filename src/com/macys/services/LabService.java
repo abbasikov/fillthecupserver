@@ -49,6 +49,8 @@ public class LabService extends BaseService{
 		
 	}
 	
+	
+	
 	public LabVo getLab(String labUuid, boolean throwExpNotFound)throws ServiceException {
 		
 		ServiceUtils.verifyNotBlank(labUuid, 			"labUuid");
@@ -168,7 +170,7 @@ public class LabService extends BaseService{
 		dao.deleteBusinessObjectByUuid(uuid);
 	}
 	
-	public ReleaseVo createRelease(String name, String branchCutDate,String hardLockDate, String mcomDate, String bcomDate) throws ServiceException {
+	public ReleaseVo createRelease(String name, String branchCutDate,String branchFreezeDate,String hardLockDate,String branchProductionDate, String mcomDate, String bcomDate,String isActivated) throws ServiceException {
 		ServiceUtils.verifyNotBlank(name, 			"name");
 		ServiceUtils.verifyNotBlank(branchCutDate, 	"branchCutDate");
 		ServiceUtils.verifyNotBlank(hardLockDate, 	"hardLockDate");
@@ -177,9 +179,14 @@ public class LabService extends BaseService{
 		
 		Release release = (Release)dao.emptyBusinessObject(BusinessObjectTypeEnum.RELEASE, name, Constants.SYSTEM_USER);
 		release.setBranchCutDate(branchCutDate);
+		release.setBranchFreezeDate(branchFreezeDate);
 		release.setBranchHardLockDate(hardLockDate);
+		release.setBranchProductionDate(branchProductionDate);
 		release.setMcomDate(mcomDate);
 		release.setBcomDate(bcomDate);
+		release.setIsActivated(isActivated);
+		release.setCreatedBy("Super Admin");
+		
 		
 		release = (Release)dao.saveBusinessObject(release);
 		

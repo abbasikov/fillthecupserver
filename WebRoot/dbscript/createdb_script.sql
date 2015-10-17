@@ -139,7 +139,20 @@ CREATE
     ) 
     ENGINE= InnoDB DEFAULT CHARSET=utf8; 
     
-SET FOREIGN_KEY_CHECKS=1;    
+SET FOREIGN_KEY_CHECKS=1;
+
+INSERT INTO `objectdb`.`dbobject` (`counter`, `client_id`, `type`, `uuid`, `version`, `name`, `created_by`, `created_on`, `modified_by`, `modified_on`, `status`) VALUES ('1', '0', 'USER1', 'USER1-SUPADMIN-FTC1', '0', 'ftcadmin', 'Macys', '2015-09-24 22:02:56', 'null', '2015-09-24 22:02:56', '0');    
+INSERT INTO `objectdb`.`dbobject_metadata` (`client_id`, `type`, `uuid`, `name`, `value`, `created_by`, `created_on`, `status`, `status_modified_on`) VALUES ('0', 'USER1', 'USER1-SUPADMIN-FTC1', 'isSuperAdmin', 'true', 'MACYS', '2015-09-24 22:02:57', '0', '2015-09-24 22:02:57');
+INSERT INTO `objectdb`.`dbobject_metadata` (`client_id`, `type`, `uuid`, `name`, `value`, `created_by`, `created_on`, `status`, `status_modified_on`) VALUES ('0', 'USER1', 'USER1-SUPADMIN-FTC1', 'password','fZG1Cw1FMeVZQCOcbNaAlRtLDaRA6A5ZVpXkkwIWcF5CkNRaahuKOGEcg2f8SeIP', 'MACYS', '2015-09-24 22:02:57', '0', '2015-09-24 22:02:57');
+INSERT INTO `objectdb`.`dbobject_metadata` (`client_id`, `type`, `uuid`, `name`, `value`, `created_by`, `created_on`, `status`, `status_modified_on`) VALUES ('0', 'USER1', 'USER1-SUPADMIN-FTC1', 'userName','ftcadmin', 'MACYS', '2015-09-24 22:02:57', '0', '2015-09-24 22:02:57');
+
+INSERT INTO `objectdb`.`dbobject` (`counter`, `client_id`, `type`, `uuid`, `version`, `name`, `created_by`, `created_on`) VALUES ('0', '0', 'RELSE', 'RELSE-57B91307-A8E6', '0', '15I', 'Macys', '2015-10-01 14:00:17');
+INSERT INTO `objectdb`.`dbobject_metadata` (`client_id`, `type`, `uuid`, `name`, `value`, `created_by`, `created_on`, `status`) VALUES ('0', 'RELSE', 'RELSE-57B91307-A8E6', 'bcomDate', '9/10', '', '2015-10-01 14:00:17', '0');
+INSERT INTO `objectdb`.`dbobject_metadata` (`client_id`, `type`, `uuid`, `name`, `value`, `created_by`, `created_on`, `status`) VALUES ('0', 'RELSE', 'RELSE-57B91307-A8E6', 'branchCutDate', '8/26', '', '2015-10-01 14:00:17', '0');
+INSERT INTO `objectdb`.`dbobject_metadata` (`client_id`, `type`, `uuid`, `name`, `value`, `created_by`, `created_on`, `status`) VALUES ('0', 'RELSE', 'RELSE-57B91307-A8E6', 'branchFreezeDate', '9/10', '', '2015-10-01 14:00:17', '0');
+INSERT INTO `objectdb`.`dbobject_metadata` (`client_id`, `type`, `uuid`, `name`, `value`, `created_by`, `created_on`, `status`) VALUES ('0', 'RELSE', 'RELSE-57B91307-A8E6', 'branchHardLockDate', '9/7', '', '2015-10-01 14:00:17', '0');
+INSERT INTO `objectdb`.`dbobject_metadata` (`client_id`, `type`, `uuid`, `name`, `value`, `created_by`, `created_on`, `status`) VALUES ('0', 'RELSE', 'RELSE-57B91307-A8E6', 'branchProductionDate', '9/10', '', '2015-10-01 14:00:17', '0');
+INSERT INTO `objectdb`.`dbobject_metadata` (`client_id`, `type`, `uuid`, `name`, `value`, `created_by`, `created_on`, `status`) VALUES ('0', 'RELSE', 'RELSE-57B91307-A8E6', 'mcomDate', '9/10', '', '2015-10-01 14:00:17', '0');
 
 
    

@@ -14,8 +14,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
+
 import com.macys.exceptions.ErrorCodeEnum;
 import com.macys.exceptions.ServiceException;
 import com.macys.services.LabService;
@@ -236,15 +238,19 @@ public class PublicRestController extends BaseRestController{
 	@Path("/releases")
 	@Produces( MediaType.APPLICATION_JSON )
 	@ApiOperation(value = "Create Release",response=ReleaseContainerVo.class)
-	public BaseContainerVo createRelease(	@ApiParam(value="name",required=true) 			@FormParam("name") 			String name,
-											@ApiParam(value="branchCutDate",required=true) 	@FormParam("branchCutDate") String branchCutDate,
-											@ApiParam(value="hardLockDate",required=true) 	@FormParam("hardLockDate") 	String hardLockDate,
-											@ApiParam(value="mcomDate",required=true)		@FormParam("mcomDate")	 	String mcomDate,
-											@ApiParam(value="bcomDate",required=true) 		@FormParam("bcomDate") 		String bcomDate){
+	public BaseContainerVo createRelease(	@ApiParam(value="name",required=true) 					@FormParam("name") 					String name,
+											@ApiParam(value="branchCutDate",required=true) 			@FormParam("branchCutDate") 		String branchCutDate,
+											@ApiParam(value="branchFreezeDate",required=true) 		@FormParam("branchFreezeDate") 		String branchFreezeDate,
+											@ApiParam(value="hardLockDate",required=true) 			@FormParam("branchHardLockDate") 	String branchHardLockDate,
+											@ApiParam(value="branchProductionDate",required=true) 	@FormParam("branchProductionDate") 	String branchProductionDate,
+											@ApiParam(value="mcomDate",required=true)				@FormParam("mcomDate")	 			String mcomDate,
+											@ApiParam(value="bcomDate",required=true) 				@FormParam("bcomDate") 				String bcomDate,
+											@ApiParam(value="isActivated",required=true) 			@FormParam("isActivated") 			String isActivated){
  
 		ReleaseContainerVo container = new ReleaseContainerVo();
+		
 		try{
-			ReleaseVo vo 		=  labService.createRelease(name,branchCutDate,hardLockDate,mcomDate,bcomDate);
+			ReleaseVo vo 		=  labService.createRelease(name, branchCutDate, branchFreezeDate, branchHardLockDate, branchProductionDate,  mcomDate,  bcomDate, isActivated);
 			container.meta.code = Constants.SUCCESS;
 			container.data		= vo;
 			return container;

@@ -13,5 +13,7 @@ public class ReleaseVo extends BaseDTO{
 	public String branchFreezeDate;
 
 	public String branchProductionDate;
+	
+	public String isActivated;
 
 }
