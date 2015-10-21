@@ -699,6 +699,63 @@ public class PublicRestController extends BaseRestController{
 		}
 	}
 	
+	@POST
+	@Path("/passwordreset")
+	@Produces( MediaType.APPLICATION_JSON )
+	public BaseContainerVo passwordReset(@FormParam("username") String username){
+
+		BaseContainerVo container = new BaseContainerVo();
+		try{
+			userService.passwordReset(username);
+			container.meta.code 			= Constants.SUCCESS;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= exc.getErrorCodeEnum().getCode();
+			container.meta.error 	= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+	}
+	
+	@POST
+	@Path("/passwordchange")
+	@Produces( MediaType.APPLICATION_JSON )
+	public BaseContainerVo passwordChange(@FormParam("username") String username, @FormParam("newpassword") String newpassword) {
+		
+		UserContainerVo container = new UserContainerVo();
+		
+		try{
+			userService.passwordChange(username,newpassword);
+			UserVo vo 				= userService.login(username,newpassword);
+			container.meta.code 	= Constants.SUCCESS;
+			container.data 			= vo;
+			return container;
+		}
+		catch(ServiceException exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= exc.getErrorCodeEnum().getCode();
+			container.meta.error 	= exc.getErrorCodeEnum().getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+		catch(Exception exc){
+			exc.printStackTrace(System.err);
+			container.meta.code 		= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getCode();
+			container.meta.error 	= ErrorCodeEnum.INTERNAL_SERVER_ERROR.getMessage();
+			container.meta.details	= ExceptionUtils.getRootCauseMessage(exc).toString();
+			return container;
+		}
+	}
+	
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}

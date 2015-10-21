@@ -149,6 +149,33 @@ public class UserService extends BaseService{
 		return users;
 	}
 	
+	public void passwordReset(String username) throws ServiceException {
+		
+		ServiceUtils.verifyNotBlank(username, "username");
+		
+		User user = (User)dao.findBusinessObjectByMetadata(BusinessObjectTypeEnum.USER, "userName", username);
+		if(user == null)
+			throw new ServiceException("User not found.", ErrorCodeEnum.USER_NOT_FOUND);
+		
+		String randomPassword = "temp123";
+		user.setPassword(EncryptionUtils.encryptPassword(randomPassword));
+		user.setIsPasswordReset("true");
+		dao.saveBusinessObject(user);
+	}
+
+	public void passwordChange(String username, String newpassword) throws ServiceException {
+		ServiceUtils.verifyNotBlank(username, 		"username");
+		ServiceUtils.verifyNotBlank(newpassword, 		"newpassword");
+		
+		User user = (User)dao.findBusinessObjectByMetadata(BusinessObjectTypeEnum.USER, "userName", username);
+		if(user == null)
+			throw new ServiceException("User not found.", ErrorCodeEnum.USER_NOT_FOUND);
+		
+		user.setPassword(EncryptionUtils.encryptPassword(newpassword));
+		user.setIsPasswordReset("false");
+		dao.saveBusinessObject(user);
+	}
+	
 			
 }
 
